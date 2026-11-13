@@ -1,0 +1,73 @@
+---
+/**
+ * Accueil : la rekenhulp complète en haut (adresse → zone → bedrag), la réponse en un paragraphe repliable,
+ * les trois questions qui fixent le montant, l'uurtarief par ville, puis les pages par groupe. Texte : src/content/home.ts.
+ */
+import PageLayout from '../layouts/PageLayout.astro';
+import Clamp from './Clamp.astro';
+import Tool from './Tool.astro';
+import AdresZoeker from './calc/AdresZoeker';
+import { HOME } from '../content/home';
+import { route, hasRoute, type Locale } from '../i18n/routes';
+import { GROUPS } from '../i18n/nav';
+import { t } from '../i18n/ui';
+import { sourceList } from '../lib/helpers';
+import { PAGES } from '../lib/pages';
+import { CITY_PAGES } from '../lib/planned';
+import { CITY_INDEX } from '../lib/engine/parking';
+import { formatMoney } from '../lib/format';
+import { faqSchema, organizationSchema, websiteSchema, webPageSchema, webApplicationSchema } from '../lib/seo';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const x = HOME[lang];
+const path = route('home', lang);
+const sources = sourceList(HOME.sources, lang);
+const jsonLd = [websiteSchema(lang), organizationSchema(lang), webPageSchema({ name: x.h1, description: x.description, path, lang }), webApplicationSchema({ name: x.h1, description: x.description, path, lang }), faqSchema(x.faqs, lang)];
+const ui = t(lang);
+const eur = (v: number) => formatMoney(v, 2, lang);
+const cities = [...CITY_INDEX.cities].filter((c) => CITY_PAGES.includes(c.slug) && hasRoute(c.slug, lang)).sort((a, b) => b.hMax - a.hMax);
+const cityLinks = Object.fromEntries(cities.map((c) => [c.slug, route(c.slug, lang)]));
+---
+<PageLayout title={x.title} description={x.description} lang={lang} jsonLd={jsonLd} faqs={x.faqs} sources={sources}>
+  <header class="mb-4">
+    <h1 class="text-[1.7rem] font-bold text-navy-900 max-sm:leading-tight sm:text-3xl md:text-4xl">{x.h1}</h1>
+    <p class="mt-2 text-base text-navy-700 sm:text-lg">{x.intro}</p>
+    <div class="mt-1 text-xs font-medium uppercase tracking-wide text-navy-500">{ui.independent}</div>
+  </header>
+  <div data-chrome class="mb-3"><AdresZoeker client:load lang={lang} target={path} cityLinks={cityLinks} /></div>
+  <div id="rekenhulp" data-outil data-chrome class="scroll-mt-20"><Tool kind="kosten" lang={lang} idPrefix="home" /></div>
+  <p class="mt-2 text-sm text-navy-600" data-chrome>{ui.privacyLine}</p>
+  <Clamp text={x.resume} lang={lang} id="clamp-home" class="my-8" />
+  <section class="mt-8">
+    <h2 class="text-2xl font-bold text-navy-900">{x.stepsTitle}</h2>
+    <ol class="mt-4 space-y-3">
+      {x.steps.filter((s) => hasRoute(s.id, lang)).map((s) => (
+        <li class="rounded-lg border-l-4 border-accent-500 bg-white px-4 py-3 shadow-sm">
+          <a href={route(s.id, lang)} class="font-semibold text-navy-900 hover:underline">{s.q}</a>
+          <p class="mt-1 text-sm text-navy-700">{s.a}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+  <section class="mt-10" data-chrome>
+    <h2 class="text-2xl font-bold text-navy-900">{x.citiesTitle}</h2>
+    <p class="mt-1 text-sm text-navy-600">{x.citiesNote}</p>
+    <ul class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+      {cities.map((c) => <li><a href={route(c.slug, lang)} class="flex min-h-12 items-center justify-between gap-2 rounded-lg border border-navy-200 bg-white px-4 py-2 hover:border-accent-300 hover:bg-accent-50"><span class="font-semibold text-accent-700 underline underline-offset-2">{c.name}</span><span class="tabular-nums text-sm text-navy-700">{eur(c.hMin)} – {eur(c.hMax)}</span></a></li>)}
+    </ul>
+  </section>
+  <section class="mt-10" data-chrome>
+    <h2 class="text-2xl font-bold text-navy-900">{x.guidesTitle}</h2>
+    <div class="mt-4 grid gap-x-6 md:grid-cols-3">
+      {GROUPS.map((g, gi) => (
+        <details class="fold" open={gi === 2}>
+          <summary><h3 class="fold-h">{g.label[lang]} ({PAGES.filter((p) => p.group === g.id && hasRoute(p.id, lang)).length})</h3></summary>
+          <ul class="mt-2 space-y-2 text-sm">
+            {PAGES.filter((p) => p.group === g.id && hasRoute(p.id, lang)).map((p) => <li><a href={route(p.id, lang)} class="block rounded-lg border border-navy-200 px-3 py-2 hover:border-accent-300 hover:bg-accent-50"><span class="font-semibold text-accent-700 underline underline-offset-2">{p[lang].nav} →</span><span class="block text-navy-600">{p[lang].card}</span></a></li>)}
+          </ul>
+        </details>
+      ))}
+    </div>
+    <p class="mt-6 text-sm text-navy-700"><a href={route('method', lang)} class="font-medium text-accent-700 underline">{lang === 'nl' ? 'Hoe de rekenhulp rekent en waar de cijfers vandaan komen' : 'How the calculator works and where the figures come from'}</a> · <a href={route('about', lang)} class="font-medium text-accent-700 underline">{lang === 'nl' ? 'Wie deze site maakt' : 'Who publishes this site'}</a></p>
+  </section>
+</PageLayout>

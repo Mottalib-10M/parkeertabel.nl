@@ -1,0 +1,20 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { CONTACT_EMAIL, SITE_NAMES } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { contactPageSchema } from '../../lib/seo';
+const lang = 'en';
+const description = 'Write to us if a parking rate, paid hour or zone looks wrong, or if you want to embed the calculator. We sell no parking and cannot handle your fine.';
+---
+<PageLayout title={`Contact ${SITE_NAMES[lang]}: report a wrong rate`} description={description} lang={lang} noindex={true} jsonLd={[contactPageSchema({ name: 'Contact', description, path: route('contact', lang), lang })]} breadcrumbs={[{ label: 'Contact' }]} showAuthor={false}>
+  <div class="prose prose-slate max-w-none">
+    <h1>Contact</h1>
+    <p>Email: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+    <h2>A wrong rate, time or zone</h2>
+    <p>Tell us the city, the zone (the number on the meter), the day and time, and what the meter or app charged. We check the register and the municipality's by-law before changing anything.</p>
+    <h2>Your parking fine or permit</h2>
+    <p>This site is not a municipality: we cannot see, cancel or object to a parking penalty, and we issue no permits. Objections go to the municipality named on the assessment. Do not send us number plates or copies of fines.</p>
+    <h2>Embedding the calculator</h2>
+    <p>Businesses, venues and residents' associations can embed it for free: <a href={route('widget', lang)}>instructions</a>.</p>
+  </div>
+</PageLayout>

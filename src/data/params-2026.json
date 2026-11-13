@@ -1,0 +1,362 @@
+{
+ "_lisezmoi": "Paramètres du site, écrits par scripts/build-params.py. Tarifs de rue : src/data/npr/*.json (scripts/build-npr.py, Nationaal Parkeer Register). Vergunningen et naheffing : lus dans la verordening parkeerbelastingen de chaque gemeente (CVDR, data-raw/cvdr/*.xml) le 2026-11-13 ; tests/params.test.ts retrouve chaque montant mot pour mot dans le XML.",
+ "year": 2026,
+ "retrieved_at": "2026-11-13",
+ "npr_read": "2026-11-12",
+ "valid_from": "2026-01-01",
+ "valid_to": "2026-12-31",
+ "naheffingMax": {
+  "bedrag": 82.0,
+  "q": "Wettelijk mag er maximaal € 82,00 per naheffing in rekening gebracht worden",
+  "file": "Almere",
+  "src": "vo_almere"
+ },
+ "steden": {
+  "utrecht": {
+   "file": "Utrecht",
+   "nah": 77.7,
+   "uur": false,
+   "q": [
+    "€ 77,70",
+    "€ 54,78",
+    "€ 164,34"
+   ],
+   "verg": {
+    "bedrag": 54.78,
+    "per": "maand",
+    "nl": "Eerste bewonersvergunning zone A1: € 54,78 per maand (€ 164,34 per kwartaal)",
+    "en": "First resident permit, zone A1: €54.78 a month (€164.34 a quarter)"
+   }
+  },
+  "rotterdam": {
+   "file": "Rotterdam",
+   "nah": 82.0,
+   "uur": true,
+   "q": [
+    "€ 82,00 te verhogen met één uur",
+    "eerste vergunning voor bewoners 114,00 9,50",
+    "elke volgende vergunning voor bewoners 308,40"
+   ],
+   "verg": {
+    "bedrag": 114.0,
+    "per": "jaar",
+    "nl": "Eerste vergunning voor bewoners bij een parkeerautomaat: € 114,00 per jaar (€ 9,50 per maand); elke volgende € 308,40",
+    "en": "First resident permit at metered spaces: €114.00 a year (€9.50 a month); each further permit €308.40"
+   }
+  },
+  "groningen": {
+   "file": "Groningen",
+   "nah": 82.0,
+   "uur": false,
+   "q": [
+    "bedragen € 82,00",
+    "(Bewonersvergunning eerste zone): € 394,20",
+    "(Bewonersvergunning tweede zone): € 135,05"
+   ],
+   "verg": {
+    "bedrag": 394.2,
+    "per": "jaar",
+    "nl": "Bewonersvergunning eerste zone (Binnenstad): € 394,20 per jaar; tweede zone € 135,05",
+    "en": "Resident permit, first zone (city centre): €394.20 a year; second zone €135.05"
+   }
+  },
+  "eindhoven": {
+   "file": "Eindhoven",
+   "nah": 57.6,
+   "uur": false,
+   "q": [
+    "bedragen € 57,60",
+    "Eerste bewonersparkeervergunning in het centrum € 19,10 € 229,20",
+    "Eerste bewonersparkeervergunning in de schilwijk en buiten de Ring € 11,79 € 141,48"
+   ],
+   "verg": {
+    "bedrag": 229.2,
+    "per": "jaar",
+    "nl": "Eerste bewonersvergunning centrum: € 19,10 per maand (€ 229,20 per jaar); schilwijk en buiten de Ring € 11,79 per maand",
+    "en": "First resident permit, centre: €19.10 a month (€229.20 a year); inner suburbs and outside the ring road €11.79 a month"
+   }
+  },
+  "leiden": {
+   "file": "Leiden",
+   "nah": 70.0,
+   "uur": false,
+   "q": [
+    "vastgesteld op € 70,00",
+    "1 e bewonersparkeervergunning kwartaal € 54,00 1 e bewonersparkeervergunning Jaar € 61,00"
+   ],
+   "verg": {
+    "bedrag": 61.0,
+    "per": "jaar",
+    "nl": "Eerste bewonersvergunning: € 54,00 per kwartaal of € 61,00 per jaar, afhankelijk van de zone (verordening 2025, de laatst gepubliceerde)",
+    "en": "First resident permit: €54.00 a quarter or €61.00 a year depending on the zone (2025 by-law, the latest published)"
+   }
+  },
+  "den-bosch": {
+   "file": "s-Hertogenbosch",
+   "nah": 82.0,
+   "uur": true,
+   "q": [
+    "bedragen € 82,00 te verhogen met één uur",
+    "€ 390,52 per jaar € 97,63 per kwartaal voor een bewonersvergunning"
+   ],
+   "verg": {
+    "bedrag": 390.52,
+    "per": "jaar",
+    "nl": "Bewonersvergunning (24 uur geldig): € 390,52 per jaar (€ 97,63 per kwartaal)",
+    "en": "Resident permit (valid 24 hours): €390.52 a year (€97.63 a quarter)"
+   }
+  },
+  "haarlem": {
+   "file": "Haarlem",
+   "nah": 82.0,
+   "uur": false,
+   "q": [
+    "bedragen € 82.",
+    "zone B of zone S per kalenderjaar € 233,28",
+    "eerste vergunning / eerste auto per kalenderjaar € 128,88"
+   ],
+   "verg": {
+    "bedrag": 233.28,
+    "per": "jaar",
+    "nl": "Bewonersvergunning zone B of S: € 233,28 per jaar; zone C, eerste auto € 128,88",
+    "en": "Resident permit, zone B or S: €233.28 a year; zone C, first car €128.88"
+   }
+  },
+  "maastricht": {
+   "file": "Maastricht",
+   "nah": 82.0,
+   "uur": true,
+   "q": [
+    "bedragen € 82,00 Deze worden verhoogd met het ter plaatse geldende tarief van het 1 e uur",
+    "-1 e vergunning € 30,08 Maand",
+    "-1 e vergunning € 5,03 Maand"
+   ],
+   "verg": {
+    "bedrag": 30.08,
+    "per": "maand",
+    "nl": "Eerste vergunning Binnenstad: € 30,08 per maand; Overig Gebied € 5,03 per maand",
+    "en": "First permit, city centre: €30.08 a month; rest of the city €5.03 a month"
+   }
+  },
+  "nijmegen": {
+   "file": "Nijmegen",
+   "nah": 82.0,
+   "uur": false,
+   "q": [
+    "onderdeel b, bedragen € 82,00",
+    "Eerste Bewonersvergunning € 48,00 per jaar € 12,00 per jaar"
+   ],
+   "verg": {
+    "bedrag": 48.0,
+    "per": "jaar",
+    "nl": "Eerste bewonersvergunning: € 48,00 of € 12,00 per jaar, afhankelijk van het gebied; de tweede € 240,00",
+    "en": "First resident permit: €48.00 or €12.00 a year depending on the area; the second €240.00"
+   }
+  },
+  "arnhem": {
+   "file": "Arnhem",
+   "nah": 78.8,
+   "uur": false,
+   "q": [
+    "onderdeel a bedragen: 78,80",
+    "Bewonersvergunning, per jaar: 149,00"
+   ],
+   "verg": {
+    "bedrag": 149.0,
+    "per": "jaar",
+    "nl": "Bewonersvergunning: € 149,00 per jaar (€ 88,00 per half jaar)",
+    "en": "Resident permit: €149.00 a year (€88.00 for six months)"
+   }
+  },
+  "breda": {
+   "file": "Breda",
+   "nah": 57.4,
+   "uur": false,
+   "q": [
+    "bedragen € 57,40",
+    "“Buiten Singels” per maand € 0,00",
+    "“Buiten Singels” per maand € 8,00"
+   ],
+   "verg": {
+    "bedrag": 0.0,
+    "per": "maand",
+    "nl": "Eerste bewonersvergunning Stadshart, Binnen en Buiten Singels: € 0,00; de tweede € 8,00 per maand",
+    "en": "First resident permit in Stadshart and the inner and outer canals: €0.00; the second €8.00 a month"
+   }
+  },
+  "zwolle": {
+   "file": "Zwolle",
+   "nah": 82.0,
+   "uur": false,
+   "q": [
+    "onderdeel a, bedragen € 82,00",
+    "zone I (parkeersector 1), per jaar: € 225,00",
+    "zone IV (parkeersectoren 18 t/m 21), per jaar: € 50,00"
+   ],
+   "verg": {
+    "bedrag": 225.0,
+    "per": "jaar",
+    "nl": "Eerste bewonersvergunning zone I: € 225,00 per jaar; zone II en III € 70,00; zone IV € 50,00",
+    "en": "First resident permit, zone I: €225.00 a year; zones II and III €70.00; zone IV €50.00"
+   }
+  },
+  "amersfoort": {
+   "file": "Amersfoort",
+   "nah": 78.8,
+   "uur": false,
+   "q": [
+    "onder a bedragen € 78,80",
+    "Eerste bewonersvergunning vergunningzones A t/m D en X t/m Z € 30,-",
+    "Tweede bewonersvergunning vergunningzones B, X, Y1 en Y2 € 300,- per jaar"
+   ],
+   "verg": {
+    "bedrag": 30.0,
+    "per": "eenmalig",
+    "nl": "Eerste bewonersvergunning (zones A t/m D en X t/m Z): € 30,-; de tweede € 150,- of € 300,- per jaar",
+    "en": "First resident permit (zones A to D and X to Z): €30; the second €150 or €300 a year"
+   }
+  }
+ },
+ "sources": {
+  "npr_gebied": {
+   "url": "https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-GEBIED/adw6-9hsg",
+   "label": {
+    "nl": "RDW, Open Data Parkeren: GEBIED (Nationaal Parkeer Register, CC0)",
+    "en": "RDW, Open Data Parkeren: GEBIED (areas, National Parking Register, CC0)"
+   }
+  },
+  "npr_regeling": {
+   "url": "https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-REGELING/yefi-qfiq",
+   "label": {
+    "nl": "RDW, Open Data Parkeren: REGELING (Nationaal Parkeer Register, CC0)",
+    "en": "RDW, Open Data Parkeren: REGELING (regulations, National Parking Register, CC0)"
+   }
+  },
+  "npr_tijdvak": {
+   "url": "https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-TIJDVAK/ixf8-gtwq",
+   "label": {
+    "nl": "RDW, Open Data Parkeren: TIJDVAK (Nationaal Parkeer Register, CC0)",
+    "en": "RDW, Open Data Parkeren: TIJDVAK (time frames, National Parking Register, CC0)"
+   }
+  },
+  "npr_tarief": {
+   "url": "https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-TARIEFDEEL/534e-5vdg",
+   "label": {
+    "nl": "RDW, Open Data Parkeren: TARIEFDEEL (Nationaal Parkeer Register, CC0)",
+    "en": "RDW, Open Data Parkeren: TARIEFDEEL (fare parts, National Parking Register, CC0)"
+   }
+  },
+  "npr_geo": {
+   "url": "https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-GEOMETRIE-GEBIED/nsk3-v9n7",
+   "label": {
+    "nl": "RDW, Open Data Parkeren: GEOMETRIE GEBIED (Nationaal Parkeer Register, CC0)",
+    "en": "RDW, Open Data Parkeren: GEOMETRIE GEBIED (area geometry, National Parking Register, CC0)"
+   }
+  },
+  "pdok": {
+   "url": "https://www.pdok.nl/introductie/-/article/pdok-locatieserver-1",
+   "label": {
+    "nl": "PDOK Locatieserver (Kadaster): adres naar coördinaten",
+    "en": "PDOK Locatieserver (Dutch Cadastre): address to coordinates"
+   }
+  },
+  "vo_utrecht": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR747206/2",
+   "label": {
+    "nl": "Gemeente Utrecht: Verordening parkeerbelastingen gemeente Utrecht 2026",
+    "en": "Municipality of Utrecht: Verordening parkeerbelastingen gemeente Utrecht 2026 (parking tax by-law)"
+   }
+  },
+  "vo_rotterdam": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR748617/1",
+   "label": {
+    "nl": "Gemeente Rotterdam: Verordening parkeerregulering en parkeerbelastingen 2026",
+    "en": "Municipality of Rotterdam: Verordening parkeerregulering en parkeerbelastingen 2026 (parking tax by-law)"
+   }
+  },
+  "vo_groningen": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR747163/1",
+   "label": {
+    "nl": "Gemeente Groningen: Verordening op de heffing en invordering van parkeerbelastingen Groningen 2026",
+    "en": "Municipality of Groningen: Verordening op de heffing en invordering van parkeerbelastingen Groningen 2026 (parking tax by-law)"
+   }
+  },
+  "vo_eindhoven": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR746560/1",
+   "label": {
+    "nl": "Gemeente Eindhoven: Verordening op de heffing en de invordering van parkeerbelastingen 2026",
+    "en": "Municipality of Eindhoven: Verordening op de heffing en de invordering van parkeerbelastingen 2026 (parking tax by-law)"
+   }
+  },
+  "vo_leiden": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR734007/1",
+   "label": {
+    "nl": "Gemeente Leiden: Verordening op de heffing en invordering van parkeerbelastingen gemeente Leiden 2025",
+    "en": "Municipality of Leiden: Verordening op de heffing en invordering van parkeerbelastingen gemeente Leiden 2025 (parking tax by-law)"
+   }
+  },
+  "vo_den-bosch": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR748278/2",
+   "label": {
+    "nl": "Gemeente ’s-Hertogenbosch: Verordening op de heffing en invordering van parkeerbelastingen ’s-Hertogenbosch 2026",
+    "en": "Municipality of ’s-Hertogenbosch: Verordening op de heffing en invordering van parkeerbelastingen ’s-Hertogenbosch 2026 (parking tax by-law)"
+   }
+  },
+  "vo_haarlem": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR752891/1",
+   "label": {
+    "nl": "Gemeente Haarlem: Verordening op de heffing en invordering van parkeerbelastingen 2026",
+    "en": "Municipality of Haarlem: Verordening op de heffing en invordering van parkeerbelastingen 2026 (parking tax by-law)"
+   }
+  },
+  "vo_maastricht": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR670922/17",
+   "label": {
+    "nl": "Gemeente Maastricht: Verordening parkeerregulering en parkeerbelastingen 2022",
+    "en": "Municipality of Maastricht: Verordening parkeerregulering en parkeerbelastingen 2022 (parking tax by-law)"
+   }
+  },
+  "vo_nijmegen": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR752081/1",
+   "label": {
+    "nl": "Gemeente Nijmegen: Verordening op de heffing en de invordering van parkeerbelastingen gemeente Nijmegen 2026",
+    "en": "Municipality of Nijmegen: Verordening op de heffing en de invordering van parkeerbelastingen gemeente Nijmegen 2026 (parking tax by-law)"
+   }
+  },
+  "vo_arnhem": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR748108/1",
+   "label": {
+    "nl": "Gemeente Arnhem: Verordening parkeren en parkeerbelastingen Arnhem 2026",
+    "en": "Municipality of Arnhem: Verordening parkeren en parkeerbelastingen Arnhem 2026 (parking tax by-law)"
+   }
+  },
+  "vo_breda": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR750745/1",
+   "label": {
+    "nl": "Gemeente Breda: Verordening op de heffing en invordering van parkeerbelastingen 2026",
+    "en": "Municipality of Breda: Verordening op de heffing en invordering van parkeerbelastingen 2026 (parking tax by-law)"
+   }
+  },
+  "vo_zwolle": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR751055/1",
+   "label": {
+    "nl": "Gemeente Zwolle: Verordening op de heffing en de invordering van parkeerbelastingen 2026",
+    "en": "Municipality of Zwolle: Verordening op de heffing en de invordering van parkeerbelastingen 2026 (parking tax by-law)"
+   }
+  },
+  "vo_amersfoort": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR739561/3",
+   "label": {
+    "nl": "Gemeente Amersfoort: Verordening Parkeerbelastingen 2025 - 2026",
+    "en": "Municipality of Amersfoort: Verordening Parkeerbelastingen 2025 - 2026 (parking tax by-law)"
+   }
+  },
+  "vo_almere": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR753182/1",
+   "label": {
+    "nl": "Gemeente Almere: Verordening op de heffing en de invordering van parkeerbelastingen 2026",
+    "en": "Municipality of Almere: Verordening op de heffing en de invordering van parkeerbelastingen 2026 (parking tax by-law)"
+   }
+  }
+ }
+}

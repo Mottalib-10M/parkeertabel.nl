@@ -1,0 +1,28 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { AUTHOR_NAME, CONTACT_EMAIL, LAST_UPDATED, REVIEW_CYCLE_MONTHS, SITE_NAMES } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { displayDate } from '../../lib/format';
+const lang = 'en';
+---
+<PageLayout title={`${SITE_NAMES[lang]} editorial policy: sources and corrections`} description="Which sources Parkeertabel uses for Dutch parking rates, in what order, how the calculators are tested, how often the register is reloaded and how a wrong figure is corrected." lang={lang} noindex={true} breadcrumbs={[{ label: 'Editorial policy' }]} showAuthor={false}>
+  <div class="prose prose-slate max-w-none">
+    <h1>Editorial policy</h1>
+    <p>A wrong rate can make someone park in the wrong place or pay too much. This page says where each figure comes from and what happens when we get one wrong.</p>
+    <h2>Responsibility</h2><p>{AUTHOR_NAME} is responsible for the content and the calculators. Contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+    <h2>Sources, in order</h2>
+    <ol>
+      <li><strong>The National Parking Register</strong> (RDW Open Data Parkeren): zones, paid hours and fares as entered by each municipality;</li>
+      <li><strong>The municipal parking tax by-law</strong> on the official local legislation site: resident permits and penalty costs;</li>
+      <li><strong>PDOK</strong>, the Cadastre's address service, only to turn an address into coordinates.</li>
+    </ol>
+    <p>We take no rates from news articles, forums or commercial parking sites. If a municipality's web page and its by-law disagree, we show the by-law and say so.</p>
+    <h2>Review</h2>
+    <p>The register is reloaded by hand; no automatic update runs. Full review at least every {REVIEW_CYCLE_MONTHS} months and after the new year's rates, which most municipalities set on 1 January. Last review: {displayDate(LAST_UPDATED, 'en')}.</p>
+    <h2>Corrections</h2>
+    <p>Every report is checked against the register and the by-law. If there is an error, the data is fixed at the source file, a test case is added and the update date changes.</p>
+    <h2>Independence</h2>
+    <p>This site is not a municipality, a parking operator or a payment app. It sells nothing, collects no number plates and has no deals with garages or apps.</p>
+    <p>More under <a href={route('about', lang)}>about</a> and in the <a href={route('method', lang)}>method</a>.</p>
+  </div>
+</PageLayout>

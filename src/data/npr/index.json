@@ -1,0 +1,269 @@
+{
+ "read": "2026-11-12",
+ "cities": [
+  {
+   "slug": "amsterdam",
+   "name": "Amsterdam",
+   "mgr": "363",
+   "zones": 156,
+   "pr": 8,
+   "garages": 13,
+   "geo": 32,
+   "hMin": 0.1,
+   "hMax": 8.05
+  },
+  {
+   "slug": "utrecht",
+   "name": "Utrecht",
+   "mgr": "344",
+   "zones": 68,
+   "pr": 3,
+   "garages": 0,
+   "geo": 0,
+   "hMin": 5.34,
+   "hMax": 8.01
+  },
+  {
+   "slug": "rotterdam",
+   "name": "Rotterdam",
+   "mgr": "599",
+   "zones": 124,
+   "pr": 4,
+   "garages": 1,
+   "geo": 69,
+   "hMin": 1.48,
+   "hMax": 7.2
+  },
+  {
+   "slug": "den-haag",
+   "name": "Den Haag",
+   "mgr": "518",
+   "zones": 88,
+   "pr": 1,
+   "garages": 5,
+   "geo": 88,
+   "hMin": 2.75,
+   "hMax": 7.15
+  },
+  {
+   "slug": "groningen",
+   "name": "Groningen",
+   "mgr": "14",
+   "zones": 39,
+   "pr": 0,
+   "garages": 6,
+   "geo": 39,
+   "hMin": 0.33,
+   "hMax": 5.0
+  },
+  {
+   "slug": "eindhoven",
+   "name": "Eindhoven",
+   "mgr": "772",
+   "zones": 13,
+   "pr": 0,
+   "garages": 0,
+   "geo": 6,
+   "hMin": 2.1,
+   "hMax": 4.8
+  },
+  {
+   "slug": "leiden",
+   "name": "Leiden",
+   "mgr": "546",
+   "zones": 28,
+   "pr": 1,
+   "garages": 5,
+   "geo": 28,
+   "hMin": 0.2,
+   "hMax": 4.0
+  },
+  {
+   "slug": "den-bosch",
+   "name": "'s-Hertogenbosch",
+   "mgr": "796",
+   "zones": 20,
+   "pr": 0,
+   "garages": 0,
+   "geo": 12,
+   "hMin": 2.98,
+   "hMax": 4.31
+  },
+  {
+   "slug": "haarlem",
+   "name": "Haarlem",
+   "mgr": "392",
+   "zones": 9,
+   "pr": 0,
+   "garages": 0,
+   "geo": 9,
+   "hMin": 1.4,
+   "hMax": 6.7
+  },
+  {
+   "slug": "maastricht",
+   "name": "Maastricht",
+   "mgr": "935",
+   "zones": 33,
+   "pr": 0,
+   "garages": 0,
+   "geo": 0,
+   "hMin": 0.2,
+   "hMax": 3.7
+  },
+  {
+   "slug": "nijmegen",
+   "name": "Nijmegen",
+   "mgr": "268",
+   "zones": 29,
+   "pr": 1,
+   "garages": 4,
+   "geo": 29,
+   "hMin": 0.5,
+   "hMax": 4.0
+  },
+  {
+   "slug": "arnhem",
+   "name": "Arnhem",
+   "mgr": "202",
+   "zones": 15,
+   "pr": 0,
+   "garages": 0,
+   "geo": 15,
+   "hMin": 3.1,
+   "hMax": 4.6
+  },
+  {
+   "slug": "breda",
+   "name": "Breda",
+   "mgr": "758",
+   "zones": 33,
+   "pr": 0,
+   "garages": 0,
+   "geo": 4,
+   "hMin": 0.1,
+   "hMax": 2.7
+  },
+  {
+   "slug": "delft",
+   "name": "Delft",
+   "mgr": "503",
+   "zones": 11,
+   "pr": 0,
+   "garages": 3,
+   "geo": 11,
+   "hMin": 1.0,
+   "hMax": 4.5
+  },
+  {
+   "slug": "zwolle",
+   "name": "Zwolle",
+   "mgr": "193",
+   "zones": 19,
+   "pr": 0,
+   "garages": 0,
+   "geo": 6,
+   "hMin": 1.0,
+   "hMax": 4.0
+  },
+  {
+   "slug": "amersfoort",
+   "name": "Amersfoort",
+   "mgr": "307",
+   "zones": 14,
+   "pr": 0,
+   "garages": 1,
+   "geo": 12,
+   "hMin": 0.3,
+   "hMax": 3.0
+  },
+  {
+   "slug": "tilburg",
+   "name": "Tilburg",
+   "mgr": "855",
+   "zones": 28,
+   "pr": 0,
+   "garages": 7,
+   "geo": 28,
+   "hMin": 1.0,
+   "hMax": 3.5
+  },
+  {
+   "slug": "almere",
+   "name": "Almere",
+   "mgr": "34",
+   "zones": 12,
+   "pr": 0,
+   "garages": 0,
+   "geo": 12,
+   "hMin": 0.7,
+   "hMax": 4.2
+  },
+  {
+   "slug": "enschede",
+   "name": "Enschede",
+   "mgr": "153",
+   "zones": 15,
+   "pr": 1,
+   "garages": 6,
+   "geo": 3,
+   "hMin": 3.45,
+   "hMax": 3.85
+  },
+  {
+   "slug": "apeldoorn",
+   "name": "Apeldoorn",
+   "mgr": "200",
+   "zones": 14,
+   "pr": 0,
+   "garages": 1,
+   "geo": 14,
+   "hMin": 0.53,
+   "hMax": 3.73
+  },
+  {
+   "slug": "dordrecht",
+   "name": "Dordrecht",
+   "mgr": "505",
+   "zones": 15,
+   "pr": 0,
+   "garages": 5,
+   "geo": 15,
+   "hMin": 2.1,
+   "hMax": 4.9
+  },
+  {
+   "slug": "alkmaar",
+   "name": "Alkmaar",
+   "mgr": "361",
+   "zones": 14,
+   "pr": 0,
+   "garages": 0,
+   "geo": 14,
+   "hMin": 0.97,
+   "hMax": 4.44
+  },
+  {
+   "slug": "zaanstad",
+   "name": "Zaanstad",
+   "mgr": "479",
+   "zones": 17,
+   "pr": 0,
+   "garages": 0,
+   "geo": 17,
+   "hMin": 2.55,
+   "hMax": 3.5
+  },
+  {
+   "slug": "amstelveen",
+   "name": "Amstelveen",
+   "mgr": "362",
+   "zones": 17,
+   "pr": 0,
+   "garages": 0,
+   "geo": 16,
+   "hMin": 0.25,
+   "hMax": 2.0
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { CONTACT_EMAIL, SITE_NAMES } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { contactPageSchema } from '../../lib/seo';
+const lang = 'nl';
+const description = 'Schrijf ons als een parkeertarief, betaaltijd of zone niet klopt, of als u de rekenhulp op uw site wilt zetten. Wij verkopen geen parkeertijd en behandelen geen boetes.';
+---
+<PageLayout title={`Contact ${SITE_NAMES[lang]}: een fout tarief melden`} description={description} lang={lang} noindex={true} jsonLd={[contactPageSchema({ name: 'Contact', description, path: route('contact', lang), lang })]} breadcrumbs={[{ label: 'Contact' }]} showAuthor={false}>
+  <div class="prose prose-slate max-w-none">
+    <h1>Contact</h1>
+    <p>E-mail: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+    <h2>Een fout tarief, tijd of zone</h2>
+    <p>Noem de stad, de zone (het nummer op de automaat), de dag en het tijdstip, en wat de automaat of app rekende. Wij controleren het register en de verordening van de gemeente voordat wij iets aanpassen.</p>
+    <h2>Uw parkeerboete of vergunning</h2>
+    <p>Deze site is geen gemeente: wij kunnen een naheffingsaanslag niet inzien, intrekken of bestrijden en geven geen vergunningen uit. Bezwaar gaat naar de gemeente die op de aanslag staat. Stuur ons geen kentekens of kopieën van boetes.</p>
+    <h2>De rekenhulp insluiten</h2>
+    <p>Ondernemers, zalen en bewonersverenigingen kunnen hem gratis op hun site zetten: <a href={route('widget', lang)}>uitleg</a>.</p>
+  </div>
+</PageLayout>

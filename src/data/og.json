@@ -1,0 +1,20 @@
+{
+ "accent": "#1D4F91",
+ "symbol": "P",
+ "variants": [
+  {
+   "file": "og-nl.png",
+   "title": "Parkeertarieven 2026\nper stad en per zone",
+   "subtitle": "uurtarief · tijden · dagkaart · vergunning · naheffing",
+   "badge": "Nationaal Parkeer Register (RDW, CC0) · gelezen 12 november 2026",
+   "brand": "Parkeertabel"
+  },
+  {
+   "file": "og-en.png",
+   "title": "Parking prices in the Netherlands 2026\nby city and zone",
+   "subtitle": "hourly rate · paid hours · day ticket · permits · penalty",
+   "badge": "National Parking Register (RDW, CC0) · read 12 November 2026",
+   "brand": "Parkeertabel"
+  }
+ ]
+}

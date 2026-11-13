@@ -1,0 +1,21 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { SITE_URL } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { breadcrumbSchema } from '../../lib/seo';
+const lang = 'nl';
+const code = `<iframe src="${SITE_URL}/embed/${lang}/parkeerkosten/" title="Parkeerkosten per stad en zone 2026" width="100%" height="1100" style="border:0;max-width:1100px" loading="lazy"></iframe>`;
+---
+<PageLayout title="Gratis de parkeerkosten-rekenhulp 2026 op uw site zetten" description="Zet de rekenhulp voor parkeerkosten 2026 gratis op uw site met een iframe: tarief, zone en betaaltijden per stad uit het Nationaal Parkeer Register. Geen account nodig." lang={lang} noindex={true} jsonLd={[breadcrumbSchema([{ name: 'Home', path: route('home', lang) }, { name: 'Widget', path: route('widget', lang) }])]} breadcrumbs={[{ label: 'Widget' }]} showAuthor={false}>
+  <header class="mb-6">
+    <h1 class="text-3xl font-bold text-navy-900 md:text-4xl">De rekenhulp insluiten</h1>
+    <p class="mt-3 text-lg text-navy-700">Voor ondernemers, zalen, hotels en bewonersverenigingen: één keer kopiëren, en uw bezoekers zien wat parkeren in de buurt kost.</p>
+  </header>
+  <div class="prose prose-slate max-w-none">
+    <pre class="overflow-x-auto rounded-lg bg-navy-900 p-4 text-sm text-white"><code>{code}</code></pre>
+    <p set:html={`Voor de Engelse versie vervangt u <code>/embed/nl/</code> door <code>/embed/en/</code>. Voorwaarden: de link onder de rekenhulp blijft zichtbaar en onveranderd, zonder garantie. Wat uw bezoekers invullen blijft op hun apparaat. Wij werken de tarieven met de hand bij, niet automatisch.`} />
+  </div>
+  <div class="mt-8 overflow-hidden rounded-xl border border-navy-200">
+    <iframe src={`/embed/${lang}/parkeerkosten/`} title="Parkeerkosten per stad en zone 2026" width="100%" height="1100" style="border:0" loading="lazy"></iframe>
+  </div>
+</PageLayout>

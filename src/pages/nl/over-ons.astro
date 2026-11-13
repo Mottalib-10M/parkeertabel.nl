@@ -1,0 +1,31 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import LegalIdentity from '../../components/LegalIdentity.astro';
+import { route } from '../../i18n/routes';
+import { AUTHOR_NAME, AUTHOR_DESC, CONTACT_EMAIL } from '../../data/site-config';
+import { srcLink } from '../../lib/helpers';
+import { profilePageSchema, breadcrumbSchema } from '../../lib/seo';
+const lang = 'nl';
+const path = route('about', lang);
+const title = 'Over Parkeertabel 2026: onafhankelijk, op open data van RDW';
+const description = 'Parkeertabel is een site van Radif Partners: gratis rekenhulpen voor parkeerkosten in 2026, gebouwd op het Nationaal Parkeer Register. Geen gemeente of app.';
+const s = (k: string, t: string) => srcLink(k, lang, t);
+---
+<PageLayout title={title} description={description} lang={lang} jsonLd={[profilePageSchema({ path, lang }), breadcrumbSchema([{ name: 'Home', path: route('home', lang) }, { name: 'Over ons', path }])]} breadcrumbs={[{ label: 'Over ons' }]}>
+  <article class="prose prose-slate max-w-none">
+    <h1>Over Parkeertabel en de uitgever</h1>
+    <div class="not-prose text-xs font-medium uppercase tracking-wide text-navy-500">Onafhankelijke site: geen gemeente en geen parkeerapp</div>
+    <p>{AUTHOR_DESC.nl}</p>
+    <h2>Waarom Parkeertabel bestaat</h2>
+    <p>Elke gemeente publiceert haar parkeertarieven op haar eigen manier: hier een kaart, daar een pdf, elders een verordening met tientallen zones. Een parkeerapp toont de prijs pas als de sessie loopt. Toch staan de tarieven, zones en tijden van bijna elke betaalde zone in één openbaar register. Parkeertabel maakt daar een rekenhulp van: stad, zone, tijd, en u ziet de kosten voordat u parkeert.</p>
+    <h2>De uitgever</h2>
+    <p>{AUTHOR_NAME}, een bedrijf dat rekenhulpen bouwt op openbare gegevens. Het is geen gemeente, geen parkeerbedrijf en geen betaalapp, gebruikt geen logo's van overheden, vraagt geen geld en heeft geen affiliatielinks.</p>
+    <LegalIdentity lang={lang} />
+    <h2>Bronnen</h2>
+    <p>Tarieven en tijden: <Fragment set:html={s('npr_tarief', 'RDW Open Data Parkeren')} /> (Nationaal Parkeer Register, CC0). Vergunningen en kosten van een naheffing: de verordeningen parkeerbelastingen van de gemeenten, zoals <Fragment set:html={s('vo_utrecht', 'die van Utrecht voor 2026')} />. Adressen: <Fragment set:html={s('pdok', 'PDOK Locatieserver')} />. De <a href={route('method', lang)}>methode</a> legt uit hoe wij ze gebruiken, het <a href={route('editorial', lang)}>redactiebeleid</a> hoe wij corrigeren.</p>
+    <h2>Wat wij niet doen</h2>
+    <p>Wij verkopen geen parkeertijd, geven geen vergunningen uit, behandelen geen bezwaar tegen een boete en geven geen juridisch advies. Het bedrag is een schatting op basis van de gepubliceerde tarieven; de automaat of app ter plaatse beslist. Wat u invult blijft in uw browser, behalve een adres dat naar PDOK gaat: zie de <a href={route('privacy', lang)}>privacyverklaring</a>.</p>
+    <h2>Schrijf ons</h2>
+    <p><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>, als een tarief, tijd of zone niet lijkt te kloppen.</p>
+  </article>
+</PageLayout>

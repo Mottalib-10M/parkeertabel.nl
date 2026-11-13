@@ -1,0 +1,21 @@
+{
+ "name": "Parkeertabel",
+ "short_name": "Parkeertabel",
+ "description": "Parkeertarieven per stad en per zone in 2026: uurtarief, betaald-parkerentijden, dagkaart, vergunning en naheffing, berekend uit het Nationaal Parkeer Register.",
+ "start_url": "/nl/",
+ "display": "standalone",
+ "background_color": "#ffffff",
+ "theme_color": "#1D4F91",
+ "icons": [
+  {
+   "src": "/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  }
+ ]
+}
