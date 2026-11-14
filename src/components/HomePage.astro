@@ -15,6 +15,7 @@ import { sourceList } from '../lib/helpers';
 import { PAGES } from '../lib/pages';
 import { CITY_PAGES } from '../lib/planned';
 import { CITY_INDEX } from '../lib/engine/parking';
+import { COVER } from '../lib/couverture';
 import { formatMoney } from '../lib/format';
 import { faqSchema, organizationSchema, websiteSchema, webPageSchema, webApplicationSchema } from '../lib/seo';
 interface Props { lang: Locale }
@@ -25,8 +26,12 @@ const sources = sourceList(HOME.sources, lang);
 const jsonLd = [websiteSchema(lang), organizationSchema(lang), webPageSchema({ name: x.h1, description: x.description, path, lang }), webApplicationSchema({ name: x.h1, description: x.description, path, lang }), faqSchema(x.faqs, lang)];
 const ui = t(lang);
 const eur = (v: number) => formatMoney(v, 2, lang);
-const cities = [...CITY_INDEX.cities].filter((c) => CITY_PAGES.includes(c.slug) && hasRoute(c.slug, lang)).sort((a, b) => b.hMax - a.hMax);
-const cityLinks = Object.fromEntries(cities.map((c) => [c.slug, route(c.slug, lang)]));
+// Toutes les villes de la rekenhulp (couverture.ts), pas seulement celles qui ont une page : sinon « 24 steden » annoncés
+// et 16 listés (testeurs naïfs du 2026-11-14). Une ville sans page renvoie à la rekenhulp de l'accueil, réglée sur elle.
+const cities = [...CITY_INDEX.cities].filter((c) => COVER.includes(c.slug)).sort((a, b) => b.hMax - a.hMax);
+const hasPage = (slug: string) => CITY_PAGES.includes(slug) && hasRoute(slug, lang);
+const cityHref = (slug: string) => (hasPage(slug) ? route(slug, lang) : `${route('home', lang)}?stad=${slug}#rekenhulp`);
+const cityLinks = Object.fromEntries(cities.filter((c) => hasPage(c.slug)).map((c) => [c.slug, route(c.slug, lang)]));
 ---
 <PageLayout title={x.title} description={x.description} lang={lang} jsonLd={jsonLd} faqs={x.faqs} sources={sources}>
   <header class="mb-4">
@@ -53,7 +58,7 @@ const cityLinks = Object.fromEntries(cities.map((c) => [c.slug, route(c.slug, la
     <h2 class="text-2xl font-bold text-navy-900">{x.citiesTitle}</h2>
     <p class="mt-1 text-sm text-navy-600">{x.citiesNote}</p>
     <ul class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-      {cities.map((c) => <li><a href={route(c.slug, lang)} class="flex min-h-12 items-center justify-between gap-2 rounded-lg border border-navy-200 bg-white px-4 py-2 hover:border-accent-300 hover:bg-accent-50"><span class="font-semibold text-accent-700 underline underline-offset-2">{c.name}</span><span class="tabular-nums text-sm text-navy-700">{eur(c.hMin)} – {eur(c.hMax)}</span></a></li>)}
+      {cities.map((c) => <li><a href={cityHref(c.slug)} class="flex min-h-12 items-center justify-between gap-2 rounded-lg border border-navy-200 bg-white px-4 py-2 hover:border-accent-300 hover:bg-accent-50"><span class="font-semibold text-accent-700 underline underline-offset-2">{c.name}</span><span class="tabular-nums text-sm text-navy-700">{eur(c.hMin)} – {eur(c.hMax)}</span></a></li>)}
     </ul>
   </section>
   <section class="mt-10" data-chrome>

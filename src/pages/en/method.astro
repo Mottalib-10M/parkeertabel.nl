@@ -5,14 +5,14 @@ import { route } from '../../i18n/routes';
 import { srcLink } from '../../lib/helpers';
 import { breadcrumbSchema, webPageSchema } from '../../lib/seo';
 import { displayDate, formatMoney, formatNumber } from '../../lib/format';
-import { CITY_INDEX, READ, fareCost, city } from '../../lib/engine/parking';
+import { READ, fareCost, city } from '../../lib/engine/parking';
 import P from '../../data/params-2026.json';
+import { N_CITIES, N_ZONES } from '../../lib/couverture';
 const lang = 'en';
 const path = route('method', lang);
 const title = 'Parkeertabel method 2026: register, formula, tests, limits';
-const description = 'How Parkeertabel works out Dutch parking costs in 2026: the National Parking Register tables it joins, the fare formula, tests, known gaps and updates by hand.';
+const description = 'How Parkeertabel works out Dutch parking costs in 2026: the National Parking Register tables it joins, the fare formula, tests, known gaps and weekly updates.';
 const s = (k: string, t: string) => srcLink(k, lang, t);
-const zones = CITY_INDEX.cities.reduce((a, c) => a + c.zones, 0);
 const utr = city('utrecht');
 const tar01 = fareCost(utr.f['TAR01'] ?? [], 60);
 ---
@@ -20,7 +20,7 @@ const tar01 = fareCost(utr.f['TAR01'] ?? [], 60);
   <article class="prose prose-slate max-w-none">
     <h1>The Parkeertabel method: how parking costs are calculated</h1>
     <div class="not-prose text-xs font-medium uppercase tracking-wide text-navy-500">Independent site: not a municipality and not a parking app</div>
-    <p>The Parkeertabel method rests on one public source for rates and hours: the National Parking Register (Nationaal Parkeer Register, NPR), which municipalities fill in and the RDW publishes as Open Data Parkeren under a CC0 licence. We downloaded the tables on {displayDate(P.retrieved_at, lang)}; the register itself was last updated on {displayDate(READ, lang)}. The site covers {formatNumber(CITY_INDEX.cities.length, 0, lang)} cities and {formatNumber(zones, 0, lang)} street zones.</p>
+    <p>The Parkeertabel method rests on one public source for rates and hours: the National Parking Register (Nationaal Parkeer Register, NPR), which municipalities fill in and the RDW publishes as Open Data Parkeren under a CC0 licence. We downloaded the tables on {displayDate(P.retrieved_at, lang)}; the register itself was last updated on {displayDate(READ, lang)}. The site covers {formatNumber(N_CITIES, 0, lang)} cities and {formatNumber(N_ZONES, 0, lang)} paid street zones, all of them in the calculator and the tables.</p>
     <h2>Four tables joined</h2>
     <p>An area from <Fragment set:html={s('npr_gebied', 'the GEBIED table')} /> is linked to its regulation in <Fragment set:html={s('npr_regeling', 'REGELING')} />, the regulation to its time frames by weekday in <Fragment set:html={s('npr_tijdvak', 'TIJDVAK')} />, and each time frame to a fare made of parts in <Fragment set:html={s('npr_tarief', 'TARIEFDEEL')} />. Only rows valid on the reading date are kept. A zone with no current fare above zero is left out rather than guessed.</p>
     <h2>The cost formula</h2>
@@ -28,8 +28,8 @@ const tar01 = fareCost(utr.f['TAR01'] ?? [], 60);
     <h2>Address to zone</h2>
     <p>The address search sends what you type to the <Fragment set:html={s('pdok', 'PDOK Locatieserver')} /> of the Dutch Cadastre, which returns the municipality and coordinates. The zone is then found in your browser on the area outlines of the <Fragment set:html={s('npr_geo', 'GEOMETRIE GEBIED table')} />. Some municipalities, such as Utrecht and Maastricht, supply no outlines: there you pick the zone from the list.</p>
     <h2>Permits and penalties</h2>
-    <p>Resident permits and penalty costs are not in the register. We read them in each municipality's 2026 parking tax by-law on the official local legislation site, for example <Fragment set:html={s('vo_rotterdam', "Rotterdam's")} /> and <Fragment set:html={s('vo_utrecht', "Utrecht's")} />. An automated test finds every amount word for word in the downloaded text. For Amsterdam, The Hague and Delft we found no current by-law in that database and show no figure.</p>
+    <p>Resident permits and penalty costs are not in the register. We read them in each municipality's 2026 parking tax by-law on the official local legislation site, for example <Fragment set:html={s('vo_rotterdam', "Rotterdam's")} /> and <Fragment set:html={s('vo_utrecht', "Utrecht's")} />. An automated test finds every amount word for word in the downloaded text. We have not read the by-laws of Amsterdam, The Hague and Delft: there we show no permit amount, and for penalties only the legal maximum.</p>
     <h2>Tests and limits</h2>
-    <p>Automated tests check the formula on fares from the register (Utrecht per minute, Amsterdam's day ticket, Rotterdam's evening hours), the join for the three largest cities and the by-law amounts. Not covered: private garages outside the register, parking app fees, blue zones, permit-holder bays and event rates. There is no automatic update: we reload the register by hand. Errors can be reported through the <a href={route('contact', lang)}>contact page</a>; how we correct is in the <a href={route('editorial', lang)}>editorial policy</a>.</p>
+    <p>Automated tests check the formula on fares from the register (Utrecht per minute, Amsterdam's day ticket, Rotterdam's evening hours), the join for the three largest cities and the by-law amounts. Not covered: private garages outside the register, parking app fees, blue zones, permit-holder bays and event rates. The register is read again automatically every Monday and on 1 and 2 January; the by-law amounts are updated by hand. Errors can be reported through the <a href={route('contact', lang)}>contact page</a>; how we correct is in the <a href={route('editorial', lang)}>editorial policy</a>.</p>
   </article>
 </PageLayout>

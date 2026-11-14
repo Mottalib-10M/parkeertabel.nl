@@ -9,7 +9,7 @@ const CORE: Record<Locale, Record<string, string>> = {
 export const GROUPS: Array<{ id: Group; label: Record<Locale, string> }> = [
   { id: 'randstad', label: { nl: 'Randstad', en: 'Randstad cities' } },
   { id: 'stad', label: { nl: 'Andere steden', en: 'Other cities' } },
-  { id: 'thema', label: { nl: 'Vergunning, boete, gratis', en: 'Permits, penalties, free parking' } },
+  { id: 'thema', label: { nl: 'Onderwerpen', en: 'Topics' } },
 ];
 export const label = (id: string, lang: Locale) => CORE[lang][id] ?? pageById(id)?.[lang]?.nav ?? id;
 const link = (id: string, lang: Locale): NavLink => ({ href: route(id, lang), label: label(id, lang) });

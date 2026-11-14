@@ -21,6 +21,11 @@ export const city = (slug: string): City => CITIES.find((c) => c.s === slug) ?? 
 export const cityInfo = (slug: string) => CITY_INDEX.cities.find((c) => c.slug === slug)!;
 export const streetZones = (c: City) => c.z.filter((z) => z.k === 'straat' && z.w.length > 0);
 export const prZones = (c: City) => c.z.filter((z) => z.k === 'pr');
+/** Nom d'une zone à l'écran : sans le code technique de tête (« ZN_B1_1_P1 Zwembad De Zijl » → « Zwembad De Zijl »).
+ *  Le nom complet reste dans le registre et dans la liste de la rekenhulp quand deux noms se confondent. */
+export const zoneName = (n: string) => n.replace(/^[A-Z0-9]+(?:_[A-Z0-9]+)+\s+(?=\S)/, '');
+/** « zone X », sans doubler le mot quand le nom commence déjà par « Zone » (« Zone Zone 10 », testeurs 2026-11-14). */
+export const inZone = (n: string) => { const x = zoneName(n); return /^zone\b/i.test(x) ? x : `zone ${x}`; };
 export const zone = (c: City, id: string): Zone => c.z.find((z) => z.i === id) ?? streetZones(c)[0] ?? c.z[0];
 
 /** Coût d'une durée (minutes) sur un tarif. */
@@ -94,6 +99,17 @@ export function nextFree(c: City, z: Zone, d: Day, m: number): [Day, number] | n
   }
   return null;
 }
+/** Première minute payante à partir d'un moment (jour, minute), au plus 7 jours plus loin : [jour, minute] ou null. */
+export function nextPaid(c: City, z: Zone, d: Day, m: number): [Day, number] | null {
+  let day = d, t = m;
+  for (let i = 0; i < 7 * 1440; i++) {
+    if (t >= 1440) { t -= 1440; day = nextDay(day); }
+    if (winAt(c, z, day, t)) return [day, t];
+    t++;
+  }
+  return null;
+}
+export const dayAfter = nextDay;
 /** Nombre de jours de la semaine (lundi à dimanche) entièrement gratuits dans la zone. */
 export const freeDays = (c: City, z: Zone) => [1, 2, 3, 4, 5, 6, 7].filter((d) => paidSpans(c, z, d).length === 0);
 /** Heures payantes par semaine (lundi à dimanche). */

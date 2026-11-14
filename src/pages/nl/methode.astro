@@ -5,14 +5,14 @@ import { route } from '../../i18n/routes';
 import { srcLink } from '../../lib/helpers';
 import { breadcrumbSchema, webPageSchema } from '../../lib/seo';
 import { displayDate, formatMoney, formatNumber } from '../../lib/format';
-import { CITY_INDEX, READ, fareCost, city } from '../../lib/engine/parking';
+import { READ, fareCost, city } from '../../lib/engine/parking';
 import P from '../../data/params-2026.json';
+import { N_CITIES, N_ZONES } from '../../lib/couverture';
 const lang = 'nl';
 const path = route('method', lang);
 const title = 'Parkeertabel methode 2026: register, rekenregel en grenzen';
 const description = 'Hoe Parkeertabel parkeerkosten in 2026 berekent: de tabellen van het Nationaal Parkeer Register, de rekenregel, de controles, wat ontbreekt en het bijwerken.';
 const s = (k: string, t: string) => srcLink(k, lang, t);
-const zones = CITY_INDEX.cities.reduce((a, c) => a + c.zones, 0);
 const utr = city('utrecht');
 const tar01 = fareCost(utr.f['TAR01'] ?? [], 60);
 ---
@@ -20,7 +20,7 @@ const tar01 = fareCost(utr.f['TAR01'] ?? [], 60);
   <article class="prose prose-slate max-w-none">
     <h1>De methode van Parkeertabel: zo rekenen wij parkeerkosten uit</h1>
     <div class="not-prose text-xs font-medium uppercase tracking-wide text-navy-500">Onafhankelijke site: geen gemeente en geen parkeerapp</div>
-    <p>De methode van Parkeertabel steunt voor tarieven en tijden op één openbare bron: het Nationaal Parkeer Register (NPR). Gemeenten vullen het zelf; de RDW publiceert het als Open Data Parkeren onder een CC0-licentie, dus vrij te gebruiken. Wij haalden de tabellen op {displayDate(P.retrieved_at, lang)} op; het register zelf was bijgewerkt op {displayDate(READ, lang)}. De site telt {formatNumber(CITY_INDEX.cities.length, 0, lang)} steden en {formatNumber(zones, 0, lang)} straatzones.</p>
+    <p>De methode van Parkeertabel steunt voor tarieven en tijden op één openbare bron: het Nationaal Parkeer Register (NPR). Gemeenten vullen het zelf; de RDW publiceert het als Open Data Parkeren onder een CC0-licentie, dus vrij te gebruiken. Wij haalden de tabellen op {displayDate(P.retrieved_at, lang)} op; het register zelf was bijgewerkt op {displayDate(READ, lang)}. De site telt {formatNumber(N_CITIES, 0, lang)} steden en {formatNumber(N_ZONES, 0, lang)} betaalde straatzones; allemaal staan ze in de rekenhulp en in de tabellen.</p>
     <h2>Vier tabellen aan elkaar gekoppeld</h2>
     <p>Een gebied uit <Fragment set:html={s('npr_gebied', 'de tabel GEBIED')} /> hoort bij een regeling in <Fragment set:html={s('npr_regeling', 'REGELING')} />. Die regeling heeft tijdvakken per dag van de week in <Fragment set:html={s('npr_tijdvak', 'TIJDVAK')} />, en elk tijdvak een tarief dat uit delen bestaat in <Fragment set:html={s('npr_tarief', 'TARIEFDEEL')} />. Wij houden alleen regels die op de leesdatum gelden. Een zone zonder geldig tarief boven nul laten wij weg; wij vullen niets zelf in.</p>
     <h2>De rekenregel</h2>
@@ -28,8 +28,8 @@ const tar01 = fareCost(utr.f['TAR01'] ?? [], 60);
     <h2>Van adres naar zone</h2>
     <p>De adreszoeker stuurt wat u typt naar de <Fragment set:html={s('pdok', 'PDOK Locatieserver')} /> van het Kadaster, die de gemeente en de coördinaten teruggeeft. De zone zoekt uw browser daarna op in de gebiedsgrenzen van <Fragment set:html={s('npr_geo', 'de tabel GEOMETRIE GEBIED')} />. Sommige gemeenten, zoals Utrecht en Maastricht, leveren geen grenzen aan: daar kiest u de zone in de lijst.</p>
     <h2>Vergunningen en boetes</h2>
-    <p>Bewonersvergunningen en de kosten van een naheffingsaanslag staan niet in het register. Wij lazen ze in de verordening parkeerbelastingen 2026 van elke gemeente, op de officiële site voor lokale regelgeving, bijvoorbeeld die van <Fragment set:html={s('vo_rotterdam', 'Rotterdam')} /> en <Fragment set:html={s('vo_utrecht', 'Utrecht')} />. Een automatische test vindt elk bedrag letterlijk terug in de gedownloade tekst. Voor Amsterdam, Den Haag en Delft vonden wij daar geen geldende verordening en tonen wij geen bedrag.</p>
+    <p>Bewonersvergunningen en de kosten van een naheffingsaanslag staan niet in het register. Wij lazen ze in de verordening parkeerbelastingen 2026 van elke gemeente, op de officiële site voor lokale regelgeving, bijvoorbeeld die van <Fragment set:html={s('vo_rotterdam', 'Rotterdam')} /> en <Fragment set:html={s('vo_utrecht', 'Utrecht')} />. Een automatische test vindt elk bedrag letterlijk terug in de gedownloade tekst. De verordening van Amsterdam, Den Haag en Delft hebben wij niet gelezen: daar tonen wij geen vergunningsbedrag, en voor de naheffing alleen het wettelijke maximum.</p>
     <h2>Controles en grenzen</h2>
-    <p>Automatische tests controleren de rekenregel op tarieven uit het register (Utrecht per minuut, de Amsterdamse dagkaart, de Rotterdamse avonduren), de koppeling voor de drie grootste steden en de bedragen uit de verordeningen. Niet meegenomen: particuliere garages buiten het register, transactiekosten van parkeerapps, blauwe zones, vergunninghoudersplaatsen en evenemententarieven. Er draait geen automatische update: wij laden het register met de hand opnieuw. Een fout meldt u via de <a href={route('contact', lang)}>contactpagina</a>; hoe wij corrigeren staat in het <a href={route('editorial', lang)}>redactiebeleid</a>.</p>
+    <p>Automatische tests controleren de rekenregel op tarieven uit het register (Utrecht per minuut, de Amsterdamse dagkaart, de Rotterdamse avonduren), de koppeling voor de drie grootste steden en de bedragen uit de verordeningen. Niet meegenomen: particuliere garages buiten het register, transactiekosten van parkeerapps, blauwe zones, vergunninghoudersplaatsen en evenemententarieven. Het register wordt elke maandag en op 1 en 2 januari automatisch opnieuw gelezen; de bedragen uit de verordeningen werken wij met de hand bij. Een fout meldt u via de <a href={route('contact', lang)}>contactpagina</a>; hoe wij corrigeren staat in het <a href={route('editorial', lang)}>redactiebeleid</a>.</p>
   </article>
 </PageLayout>

@@ -120,3 +120,14 @@ p[id$="-help"]:not([role="status"]), [data-fixe], [data-actuellement], [aria-liv
   [aria-live] table tr:has(> td + td) { border-top: 1px solid var(--color-navy-200); padding: .3rem 0; }
   [aria-live] table tr > td + td { flex: 1 1 100%; padding-top: .1rem; text-align: left; font-weight: 600; }
 }
+
+/* Sections repliables (Body.astro et accueil, <details class="fold">) : sans style, le triangle restait seul sur sa
+   ligne et le titre passait dessous, comme un titre vide (3 testeurs naïfs sur 3, 2026-11-14). Le titre et un chevron
+   sont sur la même ligne, dans un cadre comme les questions de la FAQ ; toute la ligne s'ouvre au toucher. */
+details.fold { margin: 1rem 0; border: 1px solid var(--color-navy-200); border-radius: .5rem; background: #fff; padding: 0 1rem; }
+details.fold > summary { display: flex; align-items: center; justify-content: space-between; gap: .75rem; cursor: pointer; list-style: none; min-height: 3rem; padding: .5rem 0; }
+details.fold > summary::-webkit-details-marker { display: none; }
+details.fold > summary::after { content: ""; flex: none; width: .6rem; height: .6rem; margin-right: .2rem; border-right: 2px solid var(--color-navy-500); border-bottom: 2px solid var(--color-navy-500); transform: rotate(45deg); transition: transform .15s; }
+details.fold[open] > summary::after { transform: rotate(-135deg); }
+details.fold > summary .fold-h { margin: 0; font-size: 1.15rem; line-height: 1.35; }
+details.fold > summary:focus-visible { outline: 2px solid var(--color-accent-500); outline-offset: 2px; }

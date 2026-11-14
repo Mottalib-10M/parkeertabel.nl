@@ -41,6 +41,8 @@ export const weekRows = (slug: string, l: L) => { const f = facts(slug); return 
 /** Lien vers la page ville si elle existe, sinon le nom seul. */
 import { CITY_PAGES } from '../../lib/planned';
 export { CITY_PAGES };
+/** Villes couvertes (rekenhulp et tableaux) et leur nombre : une seule source, src/lib/couverture.ts. */
+export { COVER, N_CITIES, N_ZONES } from '../../lib/couverture';
 export const cityLink = (h: { a: (id: string, t: string) => string }, slug: string, name: string) => (CITY_PAGES.includes(slug) ? h.a(slug, name) : name);
 /** Coût annuel d'une vergunning (bedrag + per). */
 export const yearOf = (x: { bedrag: number; per: string }) => (x.per === 'maand' ? x.bedrag * 12 : x.per === 'kwartaal' ? x.bedrag * 4 : x.bedrag);

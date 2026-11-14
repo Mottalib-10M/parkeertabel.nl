@@ -15,6 +15,7 @@ import { AUTHOR_NAME } from '../data/site-config';
 import type { PageDef } from '../lib/page-types';
 import { pageById } from '../lib/pages';
 import { CITY_PAGES } from '../lib/planned';
+const ZONE_TOOLS = ['kosten', 'gratis', 'dagkaart', 'naheffing'];
 interface Props { page: PageDef; lang: Locale }
 const { page, lang } = Astro.props;
 const x = page[lang]!;
@@ -34,7 +35,9 @@ const cityLinks = Object.fromEntries(CITY_PAGES.filter((id) => hasRoute(id, lang
       <p class="mt-2 text-base text-navy-700 sm:text-lg">{x.intro}</p>
       <div class="mt-1 text-xs font-medium uppercase tracking-wide text-navy-500">{ui.independent}</div>
     </header>
-    {page.tool === 'kosten' && <div data-chrome class="mb-3"><AdresZoeker client:load lang={lang} target={path} cityLinks={cityLinks} /></div>}
+    {/* Recherche par adresse sur toute page dont la rekenhulp demande une zone : l'aide du champ Zone dit « Zoek uw adres
+        hierboven » (testeurs 2026-11-14 : le champ manquait sur dagkaart, gratis et naheffing). */}
+    {ZONE_TOOLS.includes(page.tool ?? '') && <div data-chrome class="mb-3"><AdresZoeker client:load lang={lang} target={path} cityLinks={cityLinks} stay={page.tool !== 'kosten'} /></div>}
     <div id="rekenhulp" data-outil data-chrome class="mb-4 scroll-mt-20"><Tool kind={page.tool} lang={lang} arg={page.toolArg} idPrefix={`p${page.order}`} /></div>
     <p class="mb-6 text-sm text-navy-600">{ui.reviewedBy} <a href={route('about', lang)} class="underline hover:text-navy-900">{AUTHOR_NAME}</a> · <a href={route('method', lang)} class="underline hover:text-navy-900">{label('method', lang)}</a></p>
     <Clamp text={x.resume} lang={lang} id={`clamp-${page.id}`} class="mb-8" />
