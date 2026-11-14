@@ -21,7 +21,7 @@ const minutes = (txt: string, re: RegExp) => { const m = re.exec(txt); if (!m) t
 
 describe('dagkaart : le chapeau et la rekenhulp donnent le même seuil', () => {
   it('page dagkaart = rekenhulp dagkaart (Delft, valeurs par défaut)', () => {
-    const tool = runTool('dagkaart', 'nl', page('dagkaart').toolArg);
+    const tool = runTool('dagkaart', 'nl', page('dagkaart').toolArg, { zone: defaultZone(K.city('delft')).i });
     const fromTool = minutes(tool.sub ?? '', /vanaf (\d+) u(?: (\d+))? parkeren/);
     const fromIntro = minutes(page('dagkaart').nl.intro, /vanaf (\d+) uur(?: en (\d+) minuten)? parkeren/);
     expect(fromIntro).toBe(fromTool);
@@ -75,8 +75,8 @@ describe('naheffing : maximum, total et villes moins chères', () => {
     expect(p.card).not.toMatch(/Breda en Eindhoven/);
   });
   it('total = kosten + 1 uur parkeergeld, et le maximum est dit « voor de kosten »', () => {
-    const o = runTool('naheffing', 'nl', { stad: 'rotterdam' });
     const z = defaultZone(K.city('rotterdam'));
+    const o = runTool('naheffing', 'nl', { stad: 'rotterdam' }, { zone: z.i });
     expect(o.value).toBe(formatMoney(STEDEN.rotterdam.nah + z.h, 2, 'nl'));
     expect(o.sub).toContain(`= ${o.value}`);
     expect(o.sub).toMatch(/maximum .* geldt alleen voor de kosten/);
@@ -94,12 +94,12 @@ describe('naheffing : maximum, total et villes moins chères', () => {
 
 describe('rekenhulp kosten et vergunning : ce que dit chaque chiffre', () => {
   it('« Gratis parkeren » ne fait pas croire que le lendemain est gratuit toute la journée', () => {
-    const o = runTool('kosten', 'nl', { stad: 'amsterdam' });
+    const o = runTool('kosten', 'nl', { stad: 'amsterdam' }, { zone: defaultZone(K.city('amsterdam')).i });
     const row = o.rows!.find(([k]) => k === 'Gratis parkeren')!;
     expect(row[1]).toMatch(/^24:00 tot woensdag \d\d:\d\d$/);
   });
   it('un ticket plus cher que le stationnement n\'est pas proposé', () => {
-    const o = runTool('kosten', 'nl', { stad: 'amsterdam' });
+    const o = runTool('kosten', 'nl', { stad: 'amsterdam' }, { zone: defaultZone(K.city('amsterdam')).i });
     expect(o.rows!.some(([k]) => /Dagkaart of vast tarief|Goedkoper/.test(k))).toBe(false);
   });
   it('vergunning : le grand chiffre est le total sur les années demandées', () => {
@@ -108,5 +108,84 @@ describe('rekenhulp kosten et vergunning : ce que dit chaque chiffre', () => {
     expect(o.label).toContain('over 2 jaar');
     expect(o.note).toMatch(/Amsterdam/);
     expect(o.table).toBeUndefined();
+  });
+});
+
+/* ------------------------------------------------------------------ 3e tour des testeurs (2026-11-14) */
+import { DAGKAART_ROWS } from '../src/content/pages/dagkaart';
+import { getTool, paidHoursText } from '../src/lib/tool-specs';
+import { optsOf, type SelectIn } from '../src/lib/tool-types';
+
+describe('dagkaart : jamais moins qu\'une heure ni plus que la journée payée à l\'heure, dans sa propre zone', () => {
+  it('toute dagkaart gardée par le moteur est cohérente avec sa zone', () => {
+    let n = 0;
+    for (const c of K.CITIES) for (const z of c.z) for (const p of z.p) {
+      if (!K.isDayTicket(p.l)) continue;
+      const d = K.dayTicketDay(c, z, p.a);
+      expect(d, `${c.n} ${z.i} ${p.l} ${p.a}`).not.toBeNull();
+      expect(p.a).toBeGreaterThanOrEqual(K.dayHourly(c, z, d!) - 1e-9);
+      expect(p.a).toBeLessThanOrEqual(K.fullDayCost(c, z, d!) + 1e-9);
+      n++;
+    }
+    expect(n).toBeGreaterThan(100);
+  });
+  it('les dagkaarten incohérentes du registre ne sont pas montrées (Amsterdam T14_COMBI, Leiden € 28)', () => {
+    expect(K.city('amsterdam').z.find((z) => z.i === 'T14_COMBI')?.p.some((p) => K.isDayTicket(p.l)) ?? false).toBe(false);
+    // ZN_B2_8_P1 : dagkaart € 28, toute la journée payée à l'heure € 26,75.
+    expect(K.city('leiden').z.find((z) => z.i === 'ZN_B2_8_P1')!.p.some((p) => K.isDayTicket(p.l))).toBe(false);
+  });
+  it('le tableau de la page compare chaque dagkaart à sa propre zone', () => {
+    for (const x of DAGKAART_ROWS) if (x.day) {
+      expect(x.day.a, x.n).toBeLessThanOrEqual(x.day.full + 1e-9);
+      expect(x.day.a, x.n).toBeGreaterThanOrEqual(x.day.h - 1e-9);
+    }
+    const ams = DAGKAART_ROWS.find((x) => x.s === 'amsterdam')!;
+    expect(ams.day!.a).toBe(8.05);
+    expect(ams.day!.full).toBeGreaterThan(8.05);
+  });
+  it('le grand chiffre de la rekenhulp est un prix payé, pas « u bespaart »', () => {
+    const o = runTool('dagkaart', 'nl', { stad: 'delft' }, { zone: defaultZone(K.city('delft')).i });
+    expect(o.label).toMatch(/^Goedkoopst: /);
+    expect(o.label).not.toMatch(/bespaart/);
+    expect(o.sub).toMatch(/goedkoper dan/);
+  });
+});
+
+describe('zone : pas de valeur par défaut, libellés lisibles', () => {
+  for (const kind of ['kosten', 'gratis', 'dagkaart', 'naheffing']) it(`${kind} : aucune zone choisie d'avance`, () => {
+    const spec = getTool(kind, 'nl');
+    const zi = spec.inputs.find((i) => i.id === 'zone') as SelectIn;
+    expect(zi.def).toBe('');
+    const opts = optsOf(zi, Object.fromEntries(spec.inputs.map((i) => [i.id, i.def])));
+    expect(opts[0].value).toBe('');
+    expect(opts[0].label).toMatch(/^Kies uw zone/);
+    const o = runTool(kind, 'nl');
+    expect(JSON.stringify(o)).not.toMatch(/undefined|NaN/);
+    expect(o.sub ?? '').toMatch(/Kies hierboven uw zone/);
+  });
+  it('les libellés de zone n\'ont plus les heures abrégées et donnent le tarif', () => {
+    const spec = getTool('kosten', 'nl');
+    const opts = optsOf(spec.inputs.find((i) => i.id === 'zone') as SelectIn, { stad: 'amsterdam' });
+    const t11a = opts.find((o) => o.value === 'T11A')!;
+    expect(t11a.label).toBe(`Tariefzone 1 (T11A) · ${formatMoney(8.05, 2, 'nl')} per uur`);
+    for (const o of opts) expect(o.label, o.label).not.toMatch(/\b(ma|di|wo|do|vr|za|zo)-(ma|di|wo|do|vr|za|zo)\s+\d/);
+  });
+  it('les heures payantes de la zone choisie sont dites en clair sous la liste', () => {
+    const c = K.city('amsterdam'), z = defaultZone(c);
+    expect(paidHoursText(c, z, 'nl')).toBe('Maandag tot en met zaterdag 09:00-24:00, zondag 12:00-24:00');
+    const zi = getTool('kosten', 'nl').inputs.find((i) => i.id === 'zone') as SelectIn;
+    expect(typeof zi.help === 'function' ? zi.help({ stad: 'amsterdam', zone: z.i }) : '').toContain('Maandag tot en met zaterdag 09:00-24:00');
+  });
+  it('sans zone, le coût est une fourchette de la ville, chaque bout nommé', () => {
+    const o = runTool('kosten', 'nl', { stad: 'amsterdam' });
+    expect(o.value).toMatch(/^€.* tot €/);
+    expect(o.rows.map(([k]) => k).join(' ')).toMatch(/Duurste zone: .*Goedkoopste betaalde zone: /);
+    expect(o.value).not.toMatch(/^€\s?0,00/);
+  });
+  it('gratis : la ligne de comparaison suit le jour et l\'heure choisis', () => {
+    const o = runTool('gratis', 'nl', { stad: 'utrecht' }, { zone: defaultZone(K.city('utrecht')).i });
+    expect(o.rows.some(([k]) => k.includes('op zondag om 13:00'))).toBe(true);
+    expect(o.rows.some(([k]) => /dinsdag om 20:00/.test(k))).toBe(false);
+    expect(o.label).toMatch(/gratis vanaf$/);
   });
 });

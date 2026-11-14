@@ -10,7 +10,9 @@ const nl = {
   footerPopular: 'Veel bezocht',
   notFound: 'Op dit adres staat geen pagina. Op de homepage rekent u uit wat parkeren kost in uw straat: zone, tijden en uurtarief.',
   readMore: 'Verder lezen',
-  trama: { plusDeReglages: 'Waar we van uitgingen (open het en pas aan wat niet klopt)' } as Partial<LibellesTrame>,
+  // « Voorbeeld met gangbare bedragen · wijzig een getal » (trame) : « gangbare » faisait croire à des montants inventés, et
+  // plusieurs rekenhulpen n'ont aucun getal à changer, seulement des listes (testeurs 2026-11-14, 3e tour).
+  trama: { plusDeReglages: 'Waar we van uitgingen (open het en pas aan wat niet klopt)', exemple: 'Voorbeeld', exempleAide: 'pas de keuzes hierboven aan voor uw eigen bedrag' } as Partial<LibellesTrame>,
   privacyLine: 'Wij vragen geen naam, kenteken of e-mailadres: de berekening gebeurt in uw browser en er wordt niets verstuurd. Een adres dat u intypt gaat alleen naar de adreszoeker van het Kadaster (PDOK) om de coördinaten op te halen.',
   copyLink: 'Link kopiëren', copied: 'Link gekopieerd', print: 'Afdrukken', howComputed: 'Hoe dit is berekend', openFull: 'Volledige rekenhulp openen',
   independent: 'Onafhankelijke site: geen gemeente en geen parkeerapp',
@@ -25,7 +27,7 @@ const en: typeof nl = {
   footerPopular: 'Most visited',
   notFound: 'Nothing lives at this address. The home page works out what parking costs in your street: zone, paid hours and hourly rate.',
   readMore: 'Read more',
-  trama: { plusDeReglages: 'What we assumed (open it and change anything that is not your case)' } as Partial<LibellesTrame>,
+  trama: { plusDeReglages: 'What we assumed (open it and change anything that is not your case)', exemple: 'Example', exempleAide: 'change the choices above for your own amount' } as Partial<LibellesTrame>,
   privacyLine: 'We ask for no name, number plate or email: the calculation runs in your browser and nothing is sent. An address you type goes only to the Dutch Cadastre address search (PDOK) to fetch its coordinates.',
   copyLink: 'Copy share link', copied: 'Link copied', print: 'Print', howComputed: 'How this is calculated', openFull: 'Open the full calculator',
   independent: 'Independent site: not a municipality and not a parking app',

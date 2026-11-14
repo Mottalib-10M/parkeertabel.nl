@@ -31,6 +31,7 @@ const eur = (v: number) => formatMoney(v, 2, lang);
 const cities = [...CITY_INDEX.cities].filter((c) => COVER.includes(c.slug)).sort((a, b) => b.hMax - a.hMax);
 const hasPage = (slug: string) => CITY_PAGES.includes(slug) && hasRoute(slug, lang);
 const cityHref = (slug: string) => (hasPage(slug) ? route(slug, lang) : `${route('home', lang)}?stad=${slug}#rekenhulp`);
+const noPage = cities.filter((c) => !hasPage(c.slug)).sort((a, b) => a.name.localeCompare(b.name, 'nl'));
 const cityLinks = Object.fromEntries(cities.filter((c) => hasPage(c.slug)).map((c) => [c.slug, route(c.slug, lang)]));
 ---
 <PageLayout title={x.title} description={x.description} lang={lang} jsonLd={jsonLd} faqs={x.faqs} sources={sources}>
@@ -54,7 +55,7 @@ const cityLinks = Object.fromEntries(cities.filter((c) => hasPage(c.slug)).map((
       ))}
     </ol>
   </section>
-  <section class="mt-10" data-chrome>
+  <section id="steden" class="mt-10 scroll-mt-20" data-chrome>
     <h2 class="text-2xl font-bold text-navy-900">{x.citiesTitle}</h2>
     <p class="mt-1 text-sm text-navy-600">{x.citiesNote}</p>
     <ul class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -73,6 +74,9 @@ const cityLinks = Object.fromEntries(cities.filter((c) => hasPage(c.slug)).map((
         </details>
       ))}
     </div>
+    {/* Les villes sans page (testeurs 2026-11-14, 3e tour : 24 villes annoncées, 7 + 9 listées) : nommées ici, chacune
+        renvoie à la rekenhulp réglée sur elle. */}
+    <p class="mt-4 text-sm text-navy-700">{lang === 'nl' ? `Zonder eigen pagina, wel in de rekenhulp (${noPage.length}):` : `No page of their own, but in the calculator (${noPage.length}):`} {noPage.map((c, i) => <Fragment>{i > 0 && ', '}<a href={cityHref(c.slug)} class="font-medium text-accent-700 underline">{c.name}</a></Fragment>)}.</p>
     <p class="mt-6 text-sm text-navy-700"><a href={route('method', lang)} class="font-medium text-accent-700 underline">{lang === 'nl' ? 'Hoe de rekenhulp rekent en waar de cijfers vandaan komen' : 'How the calculator works and where the figures come from'}</a> · <a href={route('about', lang)} class="font-medium text-accent-700 underline">{lang === 'nl' ? 'Wie deze site maakt' : 'Who publishes this site'}</a></p>
   </section>
 </PageLayout>

@@ -6,7 +6,7 @@ export interface NumIn { kind?: 'num'; id: string; label: string; def: number; h
 export interface ChoiceIn { kind: 'choice'; id: string; label: string; def: string; options: Array<{ value: string; label: string }>; help?: string; adv?: boolean; wide?: boolean; when?: (v: V) => boolean }
 export type Opt = { value: string; label: string };
 /** Options can depend on the other fields (the counties of the chosen state). */
-export interface SelectIn { kind: 'select'; id: string; label: string; def: string; hoy?: 'mes'; options: Opt[] | ((v: V) => Opt[]); help?: string; adv?: boolean; wide?: boolean; when?: (v: V) => boolean }
+export interface SelectIn { kind: 'select'; id: string; label: string; def: string; hoy?: 'mes'; options: Opt[] | ((v: V) => Opt[]); help?: string | ((v: V) => string); adv?: boolean; wide?: boolean; when?: (v: V) => boolean }
 export type Input = NumIn | ChoiceIn | SelectIn;
 export interface OutTable { caption?: string; headers: string[]; rows: string[][]; align?: Array<'l' | 'r'> }
 export interface ToolOut {
@@ -29,6 +29,8 @@ export interface ToolOut {
 export interface ToolSpec { inputs: Input[]; run: (v: V) => ToolOut; exemple?: boolean; comparte?: (v: V) => Record<string, string | number> }
 /** The options of a select for the current values, and the value actually in force (the first option
  *  when the stored one is not offered, e.g. a county of the previous state). */
+/** Aide d'un champ, qui peut dépendre des valeurs (les heures payantes de la zone choisie). */
+export const helpOf = (i: Input, v: V): string | undefined => (typeof i.help === 'function' ? i.help(v) : i.help);
 export const optsOf = (i: SelectIn, v: V): Opt[] => (typeof i.options === 'function' ? i.options(v) : i.options);
 export function resolve(inputs: Input[], v: V): V {
   const out: V = { ...v };

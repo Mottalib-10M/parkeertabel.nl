@@ -29,5 +29,5 @@ describe('calcul d\'un stationnement', () => {
 describe('outils', () => {
   for (const kind of ['kosten', 'gratis', 'dagkaart', 'vergunning', 'naheffing', 'pr']) for (const l of ['nl', 'en'] as const)
     it(`${kind} (${l}) rend un chiffre`, () => { const o = runTool(kind, l); expect(o.value).toMatch(/\d/); expect(JSON.stringify(o)).not.toMatch(/undefined|NaN/); });
-  for (const s of CITY_PAGES) it(`kosten ${s} : zone par défaut payante`, () => expect(runTool('kosten', 'nl', { stad: s }).value).not.toBe('€ 0,00'));
+  for (const s of CITY_PAGES) it(`kosten ${s} : la zone centrale est payante`, () => expect(runTool('kosten', 'nl', { stad: s }, { zone: defaultZone(K.city(s)).i }).value).not.toBe('€ 0,00'));
 });

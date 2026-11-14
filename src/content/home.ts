@@ -24,7 +24,7 @@ const nl: HomeLang = {
   steps: [
     { id: 'amsterdam', q: '1. In welke zone staat de auto?', a: 'Elke gemeente deelt de stad op in zones met een eigen tarief. Het zonenummer staat op de automaat en in de parkeerapp.' },
     { id: 'gratis', q: '2. Valt de tijd binnen de betaaltijden?', a: 'Buiten de betaaltijden is parkeren gratis. Die tijden verschillen per dag: zondag begint vaak later.' },
-    { id: 'dagkaart', q: '3. Is een dagkaart goedkoper?', a: 'Wie lang blijft, is soms goedkoper uit met een dagkaart of met een P+R aan de rand van de stad.' },
+    { id: 'dagkaart', q: '3. Is een dagkaart goedkoper?', a: 'Wie lang blijft, is soms goedkoper uit met een dagkaart of met een P+R (Parkeren en Reizen: de auto aan de rand van de stad, verder met bus, tram of trein).' },
   ],
   citiesTitle: 'Uurtarief per stad',
   citiesNote: 'Laagste en hoogste uurtarief op straat in het register. Klik op een stad voor de zones en tijden.',
@@ -51,7 +51,7 @@ const en: HomeLang = {
   steps: [
     { id: 'amsterdam', q: '1. Which zone is the car in?', a: 'Each municipality divides the city into zones with their own rate. The zone number is on the meter and in the parking app.' },
     { id: 'gratis', q: '2. Is it within the paid hours?', a: 'Outside the paid hours parking is free. Those hours differ by day: Sunday often starts later.' },
-    { id: 'dagkaart', q: '3. Is a day ticket cheaper?', a: 'For a long stay, a day ticket or a park-and-ride site on the edge of town is sometimes cheaper.' },
+    { id: 'dagkaart', q: '3. Is a day ticket cheaper?', a: 'For a long stay, a day ticket or a park-and-ride site (P+R: leave the car on the edge of town, continue by bus, tram or train) is sometimes cheaper.' },
   ],
   citiesTitle: 'Hourly rate by city',
   citiesNote: 'Lowest and highest street hourly rate in the register. Click a city for its zones and hours.',

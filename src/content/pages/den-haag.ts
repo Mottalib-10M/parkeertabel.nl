@@ -29,7 +29,7 @@ ${h.table(['Uurtarief', 'Zones', 'Bijvoorbeeld'], rateRows('den-haag', 'nl'), 'S
 <p>In het centrum betaalt u tot laat, in het weekend zelfs tot na middernacht. Zondagochtend is gratis.</p>
 ${h.table(['Dag', 'Betaald (uurtarief)'], weekRows('den-haag', 'nl'), `Betaaltijden in ${f.z.n}`)}
 <h2>Strand, P+R en boete</h2>
-<p>Voor een stranddag is het P+R-terrein bij Scheveningen het overwegen waard; zie ${h.a('pr', 'P+R per stad')}. De kosten van een naheffingsaanslag mogen in 2026 niet hoger zijn dan ${h.eur(NAH_MAX)}, het wettelijke maximum dat onder meer in de ${h.src('vo_almere', 'verordening van Almere')} staat. Het Haagse bedrag zelf hebben wij niet gelezen. Meer bij ${h.a('naheffing', 'naheffingsaanslag')}. Wie vaak in dezelfde wijk parkeert, kan bij de gemeente navragen of een vergunning of bezoekersregeling mogelijk is.</p>`,
+<p>Voor een stranddag is het P+R-terrein bij Scheveningen het overwegen waard; zie ${h.a('pr', 'P+R per stad')}. De kosten van een naheffingsaanslag mogen in 2026 niet hoger zijn dan ${h.eur(NAH_MAX)}, het wettelijke maximum dat onder meer in de ${h.src('vo_almere', 'verordening van Almere')} staat. Het Haagse bedrag zelf hebben wij nog niet gecontroleerd; u vindt het op de site van de gemeente. Meer bij ${h.a('naheffing', 'naheffingsaanslag')}. Wie vaak in dezelfde wijk parkeert, kan bij de gemeente navragen of een vergunning of bezoekersregeling mogelijk is.</p>`,
   },
   en: {
     slug: 'parking-the-hague',
@@ -52,6 +52,6 @@ ${h.table(['Hourly rate', 'Zones', 'For example'], rateRows('den-haag', 'en'), '
 <p>In the centre you pay until late, at weekends even past midnight. Sunday morning is free.</p>
 ${h.table(['Day', 'Paid hours (hourly rate)'], weekRows('den-haag', 'en'), `Paid hours in ${f.z.n}`)}
 <h2>Beach, park and ride and fines</h2>
-<p>For a day at the beach, the park-and-ride site at Scheveningen is worth a look; see ${h.a('pr', 'park and ride by city')}. The costs of a parking penalty cannot exceed ${h.eur(NAH_MAX)} in 2026, the legal maximum stated among others in the ${h.src('vo_almere', 'Almere by-law')}. We have not read The Hague’s own amount. More under ${h.a('naheffing', 'parking penalty')}. If you park in the same district often, ask the municipality whether a permit or visitor scheme is possible.</p>`,
+<p>For a day at the beach, the park-and-ride site at Scheveningen is worth a look; see ${h.a('pr', 'park and ride by city')}. The costs of a parking penalty cannot exceed ${h.eur(NAH_MAX)} in 2026, the legal maximum stated among others in the ${h.src('vo_almere', 'Almere by-law')}. We have not yet checked The Hague’s own amount; you will find it on the municipality’s website. More under ${h.a('naheffing', 'parking penalty')}. If you park in the same district often, ask the municipality whether a permit or visitor scheme is possible.</p>`,
   },
 });

@@ -13,7 +13,8 @@ export type Win = [Day, number, number, string, number];
 export interface Part { a: number; b: number; amt: number; step: number }
 export interface Zone { i: string; n: string; k: 'straat' | 'pr' | 'garage'; g: boolean; h: number; x: boolean; w: Win[]; p: Array<{ l: string; a: number }> }
 export interface City { s: string; n: string; z: Zone[]; f: Record<string, Part[]> }
-export const CITIES = LITE as unknown as City[];
+/** Données brutes du registre ; CITIES (plus bas) = les mêmes, sans les dagkaarten incohérentes avec leur zone. */
+const RAW = LITE as unknown as City[];
 export const CITY_INDEX = INDEX as { read: string; cities: Array<{ slug: string; name: string; mgr: string; zones: number; pr: number; garages: number; geo: number; hMin: number; hMax: number }> };
 export const READ = CITY_INDEX.read;
 
@@ -23,7 +24,11 @@ export const streetZones = (c: City) => c.z.filter((z) => z.k === 'straat' && z.
 export const prZones = (c: City) => c.z.filter((z) => z.k === 'pr');
 /** Nom d'une zone à l'écran : sans le code technique de tête (« ZN_B1_1_P1 Zwembad De Zijl » → « Zwembad De Zijl »).
  *  Le nom complet reste dans le registre et dans la liste de la rekenhulp quand deux noms se confondent. */
-export const zoneName = (n: string) => n.replace(/^[A-Z0-9]+(?:_[A-Z0-9]+)+\s+(?=\S)/, '');
+export const zoneName = (n: string) => n.replace(/^[A-Z0-9]+(?:_[A-Z0-9]+)+\s+(?=\S)/, '')
+  // Heures abrégées du registre (« Tariefzone 1 ma-za 09-24 zo 12-24 (T11A) ») : illisibles (testeurs 2026-11-14,
+  // 3e tour) ; elles sont redites en clair sous la liste (paidHoursText de tool-specs.ts).
+  .replace(/,?\s*\b(?:ma|di|wo|do|vr|za|zo)(?:-(?:ma|di|wo|do|vr|za|zo))?\s+\d{1,2}(?:-\d{0,2})?(?:\s*u\b)?/gi, '')
+  .replace(/\s{2,}/g, ' ').trim();
 /** « zone X », sans doubler le mot quand le nom commence déjà par « Zone » (« Zone Zone 10 », testeurs 2026-11-14). */
 export const inZone = (n: string) => { const x = zoneName(n); return /^zone\b/i.test(x) ? x : `zone ${x}`; };
 export const zone = (c: City, id: string): Zone => c.z.find((z) => z.i === id) ?? streetZones(c)[0] ?? c.z[0];
@@ -114,6 +119,29 @@ export const dayAfter = nextDay;
 export const freeDays = (c: City, z: Zone) => [1, 2, 3, 4, 5, 6, 7].filter((d) => paidSpans(c, z, d).length === 0);
 /** Heures payantes par semaine (lundi à dimanche). */
 export const paidHoursWeek = (c: City, z: Zone) => [1, 2, 3, 4, 5, 6, 7].reduce((a, d) => a + paidSpans(c, z, d).reduce((x, s) => x + (s[1] - s[0]), 0), 0) / 60;
+
+/* ------------------------------------------------------------------ dagkaarten cohérentes */
+/** Ticket « dagkaart » ou « dagtarief » (pas les zondagkaarten ni les avondkaarten). */
+export const isDayTicket = (l: string) => /dag(kaart|tarief)/i.test(l) && !/zondag/i.test(l);
+/** Coût, à l'heure, de toute la période payante d'un jour dans la zone (de 00:00 à 24:00). */
+export const fullDayCost = (c: City, z: Zone, d: number) => stay(c, z, d, 0, 1440).total;
+/** Tarif de la première heure le plus cher d'un jour (fenêtres payantes de ce jour). */
+export const dayHourly = (c: City, z: Zone, d: number) => Math.max(0, ...z.w.filter((w) => w[0] === d).map((w) => hourly(c, w[3])));
+/** Le jour de semaine où une dagkaart a un sens dans sa zone : prix ≥ une heure et ≤ toute la période payante
+ *  payée à l'heure. Le mardi d'abord (jour des exemples), sinon le premier jour qui convient ; null si aucun.
+ *  Testeurs du 2026-11-14 (3e tour) : « dagkaart € 8,05 » à côté de « 8 uur centrum € 64,40 », une dagkaart à
+ *  € 25,10 dans une zone où la journée payée à l'heure coûte € 17,10 (Amsterdam T14_COMBI), € 28 contre € 26,75
+ *  (Leiden). Une telle dagkaart ne fait jamais économiser : elle n'est pas montrée. */
+export function dayTicketDay(c: City, z: Zone, price: number): number | null {
+  for (const d of [2, 1, 3, 4, 5, 6, 7]) {
+    const h = dayHourly(c, z, d), full = fullDayCost(c, z, d);
+    if (full > 0 && h <= price + 1e-9 && price <= full + 1e-9) return d;
+  }
+  return null;
+}
+export const dayTicketOk = (c: City, z: Zone, price: number) => dayTicketDay(c, z, price) !== null;
+/** Les villes du site : les dagkaarten incohérentes avec leur propre zone sont retirées à la source. */
+export const CITIES: City[] = RAW.map((c) => ({ ...c, z: c.z.map((z) => ({ ...z, p: z.p.filter((p) => !isDayTicket(p.l) || dayTicketOk(c, z, p.a)) })) }));
 
 /** Durée à partir de laquelle le ticket fixe (dagkaart) coûte moins que le tarif horaire, en minutes, ou null. */
 export function breakEven(c: City, z: Zone, d: Day, start: number, price: number, maxMin = 1440): number | null {

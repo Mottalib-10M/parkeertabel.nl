@@ -9,7 +9,7 @@ import SelectField from '../ui/SelectField';
 import { Choice, Exemple, ResultCard, Rows, ShareRow } from './parts';
 import { readParams, updateURL } from '../../lib/url-state';
 import { getTool, resumenCampo } from '../../lib/tool-specs';
-import { optsOf, resolve, type Input, type V } from '../../lib/tool-types';
+import { optsOf, helpOf, resolve, type Input, type V } from '../../lib/tool-types';
 import { t } from '../../i18n/ui';
 import { formatNumber, type Lang } from '../../lib/format';
 import { attributsTableau } from '../../lib/tableaux';
@@ -51,7 +51,7 @@ export default function SpecTool({ kind, lang, arg, methodHref, idPrefix = 't' }
     const id = `${idPrefix}-${i.id}`;
     const cls = i.wide ? 'sm:col-span-2' : '';
     if (i.kind === 'choice') return <div key={i.id} className={`grid grid-rows-subgrid row-span-3 ${cls}`}><Choice id={id} label={i.label} value={String(rv[i.id])} options={i.options} onChange={set(i.id)} help={i.help} /></div>;
-    if (i.kind === 'select') return <SelectField key={i.id} id={id} label={i.label} value={String(rv[i.id])} onChange={set(i.id)} options={optsOf(i, rv)} help={i.help} className={cls} />;
+    if (i.kind === 'select') return <SelectField key={i.id} id={id} label={i.label} value={String(rv[i.id])} onChange={set(i.id)} options={optsOf(i, rv)} help={helpOf(i, rv)} className={cls} />;
     return <NumberField key={i.id} id={id} label={i.label} value={Number(rv[i.id])} onChange={set(i.id)} unit={i.unit} max={i.max} decimals={i.decimals} help={i.help} link={i.link} className={cls} lang={lang} />;
   };
   const shown = spec.inputs.filter((i) => !i.when || i.when(rv));
