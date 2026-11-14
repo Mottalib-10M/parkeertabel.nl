@@ -19,7 +19,7 @@ const s = (k: string, t: string) => srcLink(k, lang, t);
     <h2>Waarom Parkeertabel bestaat</h2>
     <p>Elke gemeente publiceert haar parkeertarieven op haar eigen manier: hier een kaart, daar een pdf, elders een verordening met tientallen zones. Een parkeerapp toont de prijs pas als de sessie loopt. Toch staan de tarieven, zones en tijden van bijna elke betaalde zone in één openbaar register. Parkeertabel maakt daar een rekenhulp van: stad, zone, tijd, en u ziet de kosten voordat u parkeert.</p>
     <h2>De uitgever</h2>
-    <p>{AUTHOR_NAME}, een bedrijf dat rekenhulpen bouwt op openbare gegevens. Het is geen gemeente, geen parkeerbedrijf en geen betaalapp, gebruikt geen logo's van overheden, vraagt geen geld en heeft geen affiliatielinks.</p>
+    <p>{AUTHOR_NAME}, een Frans bedrijf dat voor meerdere landen rekenhulpen bouwt op openbare gegevens; daarom staat hieronder een adres in Frankrijk. Het is geen gemeente, geen parkeerbedrijf en geen betaalapp, gebruikt geen logo's van overheden, vraagt geen geld en heeft geen affiliatielinks.</p>
     <LegalIdentity lang={lang} />
     <h2>Bronnen</h2>
     <p>Tarieven en tijden: <Fragment set:html={s('npr_tarief', 'RDW Open Data Parkeren')} /> (Nationaal Parkeer Register, CC0). Vergunningen en kosten van een naheffing: de verordeningen parkeerbelastingen van de gemeenten, zoals <Fragment set:html={s('vo_utrecht', 'die van Utrecht voor 2026')} />. Adressen: <Fragment set:html={s('pdok', 'PDOK Locatieserver')} />. De <a href={route('method', lang)}>methode</a> legt uit hoe wij ze gebruiken, het <a href={route('editorial', lang)}>redactiebeleid</a> hoe wij corrigeren.</p>

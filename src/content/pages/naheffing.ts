@@ -1,5 +1,5 @@
 import { definePage } from '../../lib/page-types';
-import { eur, num, STEDEN, NAH_MAX, K, cityLink, facts, COVER } from './_f';
+import { foldTable, eur, num, STEDEN, NAH_MAX, K, cityLink, facts, COVER } from './_f';
 import { nahPlusText } from '../../lib/tool-specs';
 
 const rot = facts('rotterdam');
@@ -26,11 +26,11 @@ export default definePage({
   sources: ['vo_almere', 'vo_rotterdam', 'vo_utrecht', 'vo_eindhoven', 'vo_breda'],
   nl: {
     slug: 'naheffingsaanslag-parkeren',
-    nav: 'Naheffingsaanslag per stad', card: `Kosten wettelijk maximaal ${eur(NAH_MAX, 'nl')}; ${num(below.length, 'nl')} van ${num(list.length, 'nl')} steden rekenen minder`,
+    nav: 'Parkeerboete (naheffingsaanslag) per stad', card: `Kosten wettelijk maximaal ${eur(NAH_MAX, 'nl')}; ${num(below.length, 'nl')} van ${num(list.length, 'nl')} steden rekenen minder`,
     title: 'Naheffingsaanslag parkeren 2026: de kosten per stad',
     description: `Naheffingsaanslag parkeren in 2026: kosten per stad volgens de verordeningen, van ${eur(low.nah, 'nl')} in ${low.n} tot het wettelijke maximum van ${eur(NAH_MAX, 'nl')}, plus wat er bij komt.`,
     h1: 'Naheffingsaanslag parkeren 2026: wat kost hij per stad?',
-    intro: `Een naheffingsaanslag voor parkeren kost in ${num(atMax.length, 'nl')} van de ${num(list.length, 'nl')} steden die wij lazen het maximum van ${eur(NAH_MAX, 'nl')} aan kosten; daar komt het parkeergeld bij. Kies stad en zone en zie het totaal.`,
+    intro: `Niet of te kort betaald voor parkeren? Dan krijgt u geen gewone boete maar een naheffingsaanslag. Die kost in ${num(atMax.length, 'nl')} van de ${num(list.length, 'nl')} steden die wij lazen het maximum van ${eur(NAH_MAX, 'nl')} aan kosten; daar komt het parkeergeld bij. Kies stad en zone en zie het totaal.`,
     resume: `Wie parkeert zonder te betalen, of langer staat dan betaald, krijgt geen boete maar een naheffingsaanslag parkeerbelasting. Dat is een belastingaanslag: de parkeerbelasting die u had moeten betalen, plus kosten. De gemeente bepaalt die kosten in haar verordening, maar er is een wettelijk maximum. De verordening van Almere zegt het zo: wettelijk mag er maximaal ${eur(NAH_MAX, 'nl')} per naheffing in rekening worden gebracht. Wij lazen de verordening van ${num(list.length, 'nl')} steden. In ${num(atMax.length, 'nl')} daarvan zijn de kosten precies dat maximum. Het laagste bedrag vonden wij in ${low.n}: ${eur(low.nah, 'nl')}. In ${plusHour.join(', ')} komt er volgens de verordening één uur van het tarief ter plaatse bij; elders komt het parkeergeld bij dat u niet betaalde. Lager dan het maximum zijn de kosten in ${belowTxt('nl')}. Voor ${and(unread.map((x) => x.n), 'nl')} hebben wij het bedrag nog niet gecontroleerd in de verordening: daar tonen wij alleen het wettelijke maximum, en u vindt het precieze bedrag op de site van de gemeente. Bezwaar maakt u binnen zes weken na de datum op de aanslag, bij de gemeente.`,
     faqs: [
       { q: 'Is een naheffingsaanslag een boete?', a: 'Nee, juridisch niet. Niet betalen voor parkeren is geen overtreding maar het niet voldoen van een gemeentelijke belasting. De gemeente heft die belasting daarom achteraf na, met kosten erbij. Een boete van de politie of een handhaver, bijvoorbeeld voor parkeren op een invalidenplaats, is iets anders en staat niet op deze pagina.' },
@@ -40,7 +40,7 @@ export default definePage({
     ],
     body: (h) => `<h2>Kosten van een naheffingsaanslag parkeren per stad</h2>
 <p>Het bedrag aan kosten uit de verordening parkeerbelastingen van elke stad, en wat er volgens die verordening bij komt. Gesorteerd van hoog naar laag. De kosten gelden per aanslag; het bedrag staat op de aanslag die u thuis krijgt.</p>
-${h.table(['Stad', 'Kosten', 'Daarbij komt'], rows(h, 'nl'), 'Kosten van een naheffingsaanslag parkeerbelasting per stad (verordeningen 2025 en 2026)', ['l', 'r', 'l'])}
+${foldTable(list.length + unread.length, 'nl', h.table(['Stad', 'Kosten', 'Daarbij komt'], rows(h, 'nl'), 'Kosten van een naheffingsaanslag parkeerbelasting per stad (verordeningen 2025 en 2026)', ['l', 'r', 'l']))}
 <h2>Hoe hoog wordt het totaal?</h2>
 <p>Tel de kosten en het parkeergeld op. In Rotterdam, waar één uur tarief bij de kosten komt, betaalt u in de centrumzone ${h.eur(STEDEN.rotterdam.nah + rot.z.h)}: ${h.eur(STEDEN.rotterdam.nah)} kosten plus ${h.eur(rot.z.h)}. Het wettelijke maximum van ${h.eur(NAH_MAX)} geldt alleen voor de kosten; met het parkeergeld erbij kan het totaal hoger zijn. De rekenhulp bovenaan rekent het voor uw zone uit, met het uurtarief uit het Nationaal Parkeer Register. Komen er aanmaningskosten bij omdat u te laat betaalt, dan wordt het meer.</p>
 <h2>Bronnen</h2>
@@ -62,7 +62,7 @@ ${h.table(['Stad', 'Kosten', 'Daarbij komt'], rows(h, 'nl'), 'Kosten van een nah
     ],
     body: (h) => `<h2>Parking fine costs by city</h2>
 <p>The amount of costs from each city’s parking tax by-law, and what that by-law adds on top. Sorted from high to low. The costs apply per assessment; the amount is on the assessment you receive at home.</p>
-${h.table(['City', 'Costs', 'Plus'], rows(h, 'en'), 'Costs of a parking tax penalty assessment by city (2025 and 2026 by-laws)', ['l', 'r', 'l'])}
+${foldTable(list.length + unread.length, 'en', h.table(['City', 'Costs', 'Plus'], rows(h, 'en'), 'Costs of a parking tax penalty assessment by city (2025 and 2026 by-laws)', ['l', 'r', 'l']))}
 <h2>How high does the total get?</h2>
 <p>Add the costs and the parking fee. In Rotterdam, where one hour of the rate is added to the costs, you pay ${h.eur(STEDEN.rotterdam.nah + rot.z.h)} in the central zone: ${h.eur(STEDEN.rotterdam.nah)} in costs plus ${h.eur(rot.z.h)}. The legal maximum of ${h.eur(NAH_MAX)} applies to the costs only; with the parking fee added the total can be higher. The calculator at the top works it out for your zone, using the hourly rate from the National Parking Register. If reminder costs are added because you pay late, it comes to more.</p>
 <h2>Sources</h2>

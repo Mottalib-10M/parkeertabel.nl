@@ -1,5 +1,5 @@
 import { definePage } from '../../lib/page-types';
-import { eur, num, K, cityLink, COVER, N_CITIES, facts } from './_f';
+import { foldTable, eur, num, K, cityLink, COVER, N_CITIES, facts } from './_f';
 
 type Lg = 'nl' | 'en';
 const sites = COVER.flatMap((s) => { const f = facts(s);
@@ -32,7 +32,7 @@ export default definePage({
     ],
     body: (h) => `<h2>P+R parkeren per stad</h2>
 <p>Elk P+R-terrein met een prijs in het register. De prijs is de goedkoopste dagkaart, of anders acht uur per uur op een dinsdag vanaf 09:00. Ernaast: acht uur in de centrumzone van dezelfde stad.</p>
-${h.table(['Stad', 'P+R-terrein', 'Prijs P+R', '8 uur centrum'], rows(h, 'nl'), `P+R-terreinen met een prijs in het Nationaal Parkeer Register (${num(cities.length, 'nl')} steden)`, ['l', 'l', 'r', 'r'])}
+${foldTable(cities.length, 'nl', h.table(['Stad', 'P+R-terrein', 'Prijs P+R', '8 uur centrum'], rows(h, 'nl'), `P+R-terreinen met een prijs in het Nationaal Parkeer Register (${num(cities.length, 'nl')} steden)`, ['l', 'l', 'r', 'r']))}
 <h2>Waar u op let bij P+R</h2>
 <p>Kijk vooraf of het tarief een OV-reis vereist en hoe lang u mag blijven: sommige terreinen hebben een maximum van een paar dagen. Reken de reis naar het centrum mee, zeker met meer mensen in de auto. Voor een avond in de stad is een P+R minder handig: de laatste bus of tram kan vroeg gaan. Bij grote evenementen kan een terrein ook vol zijn of een ander tarief hebben; dat staat dan bij de ingang.</p>
 <h2>Andere manieren om te besparen</h2>
@@ -53,7 +53,7 @@ ${h.table(['Stad', 'P+R-terrein', 'Prijs P+R', '8 uur centrum'], rows(h, 'nl'), 
     ],
     body: (h) => `<h2>Park and ride by city</h2>
 <p>Every P+R site with a price in the register. The price is the cheapest day ticket, or otherwise eight hours by the hour on a Tuesday from 09:00. Next to it: eight hours in the central zone of the same city.</p>
-${h.table(['City', 'P+R site', 'P+R price', '8 hours centre'], rows(h, 'en'), `P+R sites with a price in the National Parking Register (${num(cities.length, 'en')} cities)`, ['l', 'l', 'r', 'r'])}
+${foldTable(cities.length, 'en', h.table(['City', 'P+R site', 'P+R price', '8 hours centre'], rows(h, 'en'), `P+R sites with a price in the National Parking Register (${num(cities.length, 'en')} cities)`, ['l', 'l', 'r', 'r']))}
 <h2>What to check with park and ride</h2>
 <p>Check beforehand whether the fare requires a public transport trip and how long you may stay: some sites have a limit of a few days. Count the trip to the centre, especially with more people in the car. For an evening in town a P+R is less convenient: the last bus or tram may leave early. During big events a site can also be full or charge a different fare; that is then posted at the entrance.</p>
 <h2>Other ways to save</h2>

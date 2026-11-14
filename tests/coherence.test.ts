@@ -176,16 +176,59 @@ describe('zone : pas de valeur par défaut, libellés lisibles', () => {
     const zi = getTool('kosten', 'nl').inputs.find((i) => i.id === 'zone') as SelectIn;
     expect(typeof zi.help === 'function' ? zi.help({ stad: 'amsterdam', zone: z.i }) : '').toContain('Maandag tot en met zaterdag 09:00-24:00');
   });
-  it('sans zone, le coût est une fourchette de la ville, chaque bout nommé', () => {
+  it('sans zone, le coût est un montant (la zone la plus chère), la moins chère est nommée dessous (4e tour)', () => {
     const o = runTool('kosten', 'nl', { stad: 'amsterdam' });
-    expect(o.value).toMatch(/^€.* tot €/);
-    expect(o.rows.map(([k]) => k).join(' ')).toMatch(/Duurste zone: .*Goedkoopste betaalde zone: /);
-    expect(o.value).not.toMatch(/^€\s?0,00/);
+    expect(o.value).not.toMatch(/tot/);
+    expect(o.value).toBe(formatMoney(16.1, 2, 'nl'));
+    expect(o.label).toMatch(/duurste zone/);
+    expect(o.sub).toMatch(/goedkoopste betaalde zone, .+: €/);
+    expect(o.sub).toMatch(/Kies hierboven uw zone/);
   });
   it('gratis : la ligne de comparaison suit le jour et l\'heure choisis', () => {
     const o = runTool('gratis', 'nl', { stad: 'utrecht' }, { zone: defaultZone(K.city('utrecht')).i });
     expect(o.rows.some(([k]) => k.includes('op zondag om 13:00'))).toBe(true);
     expect(o.rows.some(([k]) => /dinsdag om 20:00/.test(k))).toBe(false);
     expect(o.label).toMatch(/gratis vanaf$/);
+  });
+});
+
+/* ------------------------------------------------------------------ 4e tour des testeurs (2026-11-14) */
+import { zoneWords, defaultZone as dz } from '../src/lib/tool-specs';
+import { rateText } from '../src/content/pages/dagkaart';
+
+describe('4e tour : zones en mots, dagkaart « per uur » juste, même fourchette partout', () => {
+  it('un nom de zone qui n\'est qu\'un code est traduit en mots (wijk ou tarif)', () => {
+    let named = 0;
+    for (const c of K.CITIES) for (const z of K.streetZones(c)) {
+      const w = zoneWords(c, z, 'nl');
+      if (K.isCodeName(z.n) && z.h > 0) expect(w, `${c.n} ${z.n}`).not.toBe(K.zoneName(z.n));
+      if (K.wijkOf(c, z)) named++;
+    }
+    expect(named).toBeGreaterThan(400);
+    expect(K.isCodeName('10c max 60 po 60')).toBe(true);
+    expect(K.isCodeName('Wijk C.')).toBe(true);
+    expect(K.isCodeName('Nieuw Welgelegen')).toBe(false);
+  });
+  it('dagkaart : « N uur × € x » seulement si chaque heure coûte x, sinon la fourchette', () => {
+    for (const x of DAGKAART_ROWS) if (x.day) {
+      const r = x.day.r;
+      expect(r.min, x.n).toBeLessThanOrEqual(r.max);
+      if (r.min === r.max) expect(Math.abs(r.hours * r.max - x.day.full), x.n).toBeLessThan(0.01 * r.hours + 1e-9);
+      else expect(rateText(r, x.day.full, 'nl'), x.n).toMatch(/gemiddeld .* per uur, want niet elk uur kost even veel/);
+    }
+    const lei = DAGKAART_ROWS.find((x) => x.s === 'leiden')!.day!, nij = DAGKAART_ROWS.find((x) => x.s === 'nijmegen')!.day!;
+    expect([lei.full, lei.r.min, lei.r.max]).toEqual([31.4, 0.2, 3.1]);
+    expect([nij.full, nij.r.min, nij.r.max]).toEqual([24.9, 0.5, 2.6]);
+  });
+  it('naheffing : l\'heure de parkeergeld sans zone = la fourchette de l\'accueil (Rotterdam)', () => {
+    const o = runTool('naheffing', 'nl', { stad: 'rotterdam' });
+    const info = K.cityInfo('rotterdam');
+    expect(o.rows.map(([, v]) => v).join(' ')).toContain(`${formatMoney(info.hMin, 2, 'nl')} tot ${formatMoney(info.hMax, 2, 'nl')}`);
+  });
+  it('dagkaart sans zone : un prix et le seuil, pour la zone du chapeau de la page', () => {
+    const o = runTool('dagkaart', 'nl', { stad: 'delft' });
+    expect(o.value).toMatch(/^€/);
+    expect(o.sub).toMatch(/voordeliger vanaf/);
+    expect(o.hyp).toContain(zoneWords(K.city('delft'), dz(K.city('delft')), 'nl'));
   });
 });

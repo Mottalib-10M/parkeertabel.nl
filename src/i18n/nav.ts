@@ -22,6 +22,8 @@ export function navCategories(lang: Locale): NavCategory[] {
   return GROUPS.map((g) => ({ label: g.label[lang], links: g.id === 'stad' ? [...inGroup(g.id, lang), allCities(lang)] : inGroup(g.id, lang) })).filter((c) => c.links.length);
 }
 export const navDirect = (lang: Locale): NavLink[] => [link('method', lang)];
+/** Le calculateur de l'accueil, en tête du menu de téléphone (testeurs 2026-11-14, 4e tour : « pour revenir au calcul, il faut deviner le logo »). */
+export const navHome = (lang: Locale): NavLink => link('home', lang);
 export const footerColumns = (lang: Locale): NavCategory[] => {
   const site = { label: { nl: 'Deze site', en: 'This site' }[lang], links: ['home', 'method', 'about', 'contact', 'editorial', 'widget', 'terms', 'privacy', 'cookies'].map((i) => link(i, lang)) };
   return [...navCategories(lang), site];

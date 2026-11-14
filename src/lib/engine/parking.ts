@@ -7,6 +7,7 @@
  */
 import LITE from '../../data/npr/lite.json';
 import INDEX from '../../data/npr/index.json';
+import WIJKEN from '../../data/npr/wijken.json';
 
 export type Day = number | 'F';
 export type Win = [Day, number, number, string, number];
@@ -31,6 +32,14 @@ export const zoneName = (n: string) => n.replace(/^[A-Z0-9]+(?:_[A-Z0-9]+)+\s+(?
   .replace(/\s{2,}/g, ' ').trim();
 /** « zone X », sans doubler le mot quand le nom commence déjà par « Zone » (« Zone Zone 10 », testeurs 2026-11-14). */
 export const inZone = (n: string) => { const x = zoneName(n); return /^zone\b/i.test(x) ? x : `zone ${x}`; };
+/** Wijk du CBS où se trouve la zone (scripts/build-wijken.py, Locatieserver de PDOK), ou celle de sa zone mère
+ *  (« T12A_U21 » est dans T12A) ; undefined sans géométrie (Utrecht, Maastricht…). Testeurs 2026-11-14 (4e tour). */
+const W = WIJKEN as Record<string, Record<string, string>>;
+export const wijkOf = (c: City, z: Zone): string | undefined => W[c.s]?.[z.i] ?? W[c.s]?.[z.i.split('_')[0]];
+/** Un nom du registre qui n'est qu'un code (« 10c max 60 po 60 », « Zone 12 », « Wijk C. », « 9003 ») : aucun mot de
+ *  quatre lettres ou plus en dehors des mots de service. */
+const SERVICE = /^(zone|tarief\w*|groep|betaald|parkeren|gebied\w*|wijk|max|telkens|minuten|uur|dagtarief|vanaf)$/i;
+export const isCodeName = (n: string) => !zoneName(n).split(/[^A-Za-zÀ-ÿ']+/).some((w) => w.length >= 4 && !SERVICE.test(w));
 export const zone = (c: City, id: string): Zone => c.z.find((z) => z.i === id) ?? streetZones(c)[0] ?? c.z[0];
 
 /** Coût d'une durée (minutes) sur un tarif. */
@@ -143,6 +152,17 @@ export const dayTicketOk = (c: City, z: Zone, price: number) => dayTicketDay(c, 
 /** Les villes du site : les dagkaarten incohérentes avec leur propre zone sont retirées à la source. */
 export const CITIES: City[] = RAW.map((c) => ({ ...c, z: c.z.map((z) => ({ ...z, p: z.p.filter((p) => !isDayTicket(p.l) || dayTicketOk(c, z, p.a)) })) }));
 
+/** Ce que coûte chaque heure pleine payée d'un jour, de 00:00 à 24:00 (le tarif peut monter avec la durée, Leiden, ou
+ *  changer le soir, Nijmegen) : [min, max, heures payées]. Testeurs 2026-11-14 (4e tour) : « € 31,40 (€ 0,20 per uur) ». */
+export function hourRange(c: City, z: Zone, d: number): { min: number; max: number; hours: number } {
+  let prev = 0, min = Infinity, max = 0;
+  for (let k = 0; k < 24; k++) {
+    const cur = stay(c, z, d, 0, (k + 1) * 60).total;
+    if (winAt(c, z, d, k * 60) && winAt(c, z, d, k * 60 + 59)) { const x = Math.round((cur - prev) * 100) / 100; min = Math.min(min, x); max = Math.max(max, x); }
+    prev = cur;
+  }
+  return { min: min === Infinity ? 0 : min, max, hours: stay(c, z, d, 0, 1440).paid / 60 };
+}
 /** Durée à partir de laquelle le ticket fixe (dagkaart) coûte moins que le tarif horaire, en minutes, ou null. */
 export function breakEven(c: City, z: Zone, d: Day, start: number, price: number, maxMin = 1440): number | null {
   for (let t = 15; t <= maxMin; t += 15) if (stay(c, z, d, start, t).total >= price) return t;

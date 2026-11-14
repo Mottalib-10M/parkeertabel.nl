@@ -19,7 +19,7 @@ const s = (k: string, t: string) => srcLink(k, lang, t);
     <h2>Why Parkeertabel exists</h2>
     <p>Each Dutch municipality publishes its parking rates in its own way: a map here, a PDF there, a by-law with dozens of zones. Parking apps show the price only once you have started a session. Yet the rates, zones and hours of almost every paid zone are in one public register. Parkeertabel turns that register into a calculator: a city, a zone, a time, and you see the cost before you park.</p>
     <h2>The publisher</h2>
-    <p>{AUTHOR_NAME}, a company that builds calculators from public data. It is not a municipality, a parking operator or a payment app, uses no logos of any administration, charges nothing and has no affiliate links.</p>
+    <p>{AUTHOR_NAME}, a French company that builds calculators from public data for several countries; hence the address in France below. It is not a municipality, a parking operator or a payment app, uses no logos of any administration, charges nothing and has no affiliate links.</p>
     <LegalIdentity lang={lang} />
     <h2>Sources</h2>
     <p>Rates and hours: <Fragment set:html={s('npr_tarief', 'RDW Open Data Parkeren')} /> (National Parking Register, CC0). Permits and penalty costs: the municipal parking tax by-laws, such as <Fragment set:html={s('vo_utrecht', "Utrecht's 2026 by-law")} />. Addresses: <Fragment set:html={s('pdok', 'PDOK Locatieserver')} />. The <a href={route('method', lang)}>method</a> explains how they are used and the <a href={route('editorial', lang)}>editorial policy</a> how they are corrected.</p>

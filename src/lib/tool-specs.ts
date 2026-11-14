@@ -40,8 +40,21 @@ export function defaultZone(c: K.City): K.Zone {
 /** Libellé d'une zone dans la liste : son nom sans les heures abrégées, puis le tarif horaire en clair. Les heures
  *  payantes de la zone choisie s'affichent en mots sous la liste (testeurs 2026-11-14, 3e tour : « Tariefzone 1
  *  ma-za 09-24 zo 12-24 (T11A) » ne disait rien). */
+/** Une zone en mots (testeurs 2026-11-14, 4e tour : « Tariefzone 1 (T11V) », « 10c max 60 po 60 » ne disaient rien) :
+ *  la wijk (quartier du CBS, via PDOK) devant, le nom du registre entre parenthèses ; sans wijk, un nom qui n'est
+ *  qu'un code est décrit par son tarif (« zone met € 0,10 per uur (10c max 60 po 60) »). `rate: false` dans les
+ *  listes, qui disent déjà le tarif. */
+export function zoneWords(c: K.City, z: K.Zone, l: Lang, rate = true): string {
+  const code = K.zoneName(z.n), wk = K.wijkOf(c, z);
+  const flat = code.replace(/\s*\(\s*([^)]*?)\s*\)/g, ', $1');
+  if (wk) return code.toLowerCase().includes(wk.toLowerCase()) ? code : `${l === 'en' ? wk.replace(/ en omgeving$/, ' area') : wk} (${flat})`;
+  if (!rate || z.k !== 'straat' || z.h <= 0 || !K.isCodeName(z.n)) return code;
+  return T(l, `zone met ${perU(z.h, l)} (${flat})`, `zone at ${perU(z.h, l)} (${flat})`);
+}
+/** « in … » : « zone X » quand le nom ne dit pas déjà ce que c'est. */
+export const inZoneW = (c: K.City, z: K.Zone, l: Lang) => { const w = zoneWords(c, z, l); return w === K.zoneName(z.n) ? K.inZone(z.n) : w; };
 const zoneLabel = (c: K.City, z: K.Zone, l: Lang) => {
-  const name = z.k === 'pr' ? `P+R ${K.zoneName(z.n).replace(/^P\+R\s*/i, '')}` : K.zoneName(z.n);
+  const name = z.k === 'pr' ? `P+R ${K.zoneName(z.n).replace(/^P\+R\s*/i, '')}` : zoneWords(c, z, l, false);
   if (z.h > 0) return `${name} · ${perU(z.h, l)}`;
   if (z.x) return `${name} · ${T(l, 'oplopend tarief', 'rising rate')}`;
   return `${name} · ${T(l, 'dagkaart', 'day ticket')}`;
@@ -96,12 +109,11 @@ export function spansText(c: K.City, z: K.Zone, d: number, l: Lang): string {
   return sp.map(([a, b, h]) => `${a === 0 && b < 1440 && sp.length > 1 ? T(l, "'s nachts ", 'overnight ') : ''}${hhmm(a)} ${T(l, 'tot', 'to')} ${hhmm(b)}${h > 0 ? ` (${eur(h, l)}/${T(l, 'u', 'h')})` : ''}`).join(', ');
 }
 export function weekTable(c: K.City, z: K.Zone, l: Lang) {
-  return { caption: T(l, `Betaald parkeren in ${K.inZone(z.n)}, per dag`, `Paid parking in ${K.inZone(z.n)}, by day`), headers: [T(l, 'Dag', 'Day'), T(l, 'Betaald (uurtarief)', 'Paid hours (hourly rate)')],
+  return { caption: T(l, `Betaald parkeren in ${inZoneW(c, z, l)}, per dag`, `Paid parking in ${inZoneW(c, z, l)}, by day`), headers: [T(l, 'Dag', 'Day'), T(l, 'Betaald (uurtarief)', 'Paid hours (hourly rate)')],
     rows: [1, 2, 3, 4, 5, 6, 7].map((d) => [dayName(d, l), spansText(c, z, d, l)]) };
 }
 /** Ville et zone choisies ; z = null tant qu'aucune zone n'est choisie. */
 const cityZone = (v: V) => { const c = K.city(s(v, 'stad')); return { c, z: c.z.find((x) => x.i === s(v, 'zone')) ?? null }; };
-const KIES = (l: Lang) => T(l, 'Kies hierboven uw zone, of zoek op adres, voor het bedrag in uw straat.', 'Choose your zone above, or search by address, for the amount in your street.');
 /** Un moment [jour, minute] vu depuis le jour `d` : « 18:00 » le jour même, « 24:00 » pour minuit qui suit,
  *  sinon avec le nom du jour. Testeurs du 2026-11-14 : « Gratis parkeren vanaf woensdag 00:00 » se lisait
  *  « mercredi gratuit toute la journée », alors que le stationnement redevient payant à 09:00. */
@@ -141,12 +153,14 @@ function kostenSpec(l: Lang, a?: Args): ToolSpec {
         // La fourchette porte sur les zones où l'on paie à ce moment ; les zones gratuites sont comptées à part.
         const paid = all.filter((p) => p.t > 0), free = all.length - paid.length;
         const lo = paid[0] ?? all[0], hi = paid[paid.length - 1] ?? all[all.length - 1];
+        // Testeurs 2026-11-14 (4e tour) : « € 0,20 tot € 16,10 » n'était pas une réponse. Le grand chiffre est le prix de la
+        // zone la plus chère, nommée en mots ; la moins chère suit, nommée aussi, puis ce qu'il faut faire.
         return {
-          label: T(l, `Parkeerkosten in ${c.n}: hangt af van de zone`, `Parking cost in ${c.n}: depends on the zone`), value: T(l, `${eur(lo.t, l)} tot ${eur(hi.t, l)}`, `${eur(lo.t, l)} to ${eur(hi.t, l)}`),
-          hyp: T(l, `${when}, in een van de ${formatNumber(all.length, 0, l)} betaalde zones`, `${when}, in one of the ${formatNumber(all.length, 0, l)} paid zones`),
-          sub: KIES(l),
-          rows: [[T(l, `Duurste zone: ${K.zoneName(hi.x.n)}`, `Dearest zone: ${K.zoneName(hi.x.n)}`), eur(hi.t, l)], [T(l, `Goedkoopste betaalde zone: ${K.zoneName(lo.x.n)}`, `Cheapest paid zone: ${K.zoneName(lo.x.n)}`), eur(lo.t, l)],
-            [T(l, 'Zones waar u op dat moment niets betaalt', 'Zones where you pay nothing at that time'), `${formatNumber(free, 0, l)} / ${formatNumber(all.length, 0, l)}`]],
+          label: T(l, `Parkeerkosten in ${c.n}, duurste zone`, `Parking cost in ${c.n}, dearest zone`), value: eur(hi.t, l),
+          hyp: `${when}, ${zoneWords(c, hi.x, l)}`,
+          sub: [T(l, `In de goedkoopste betaalde zone, ${zoneWords(c, lo.x, l)}: ${eur(lo.t, l)}.`, `In the cheapest paid zone, ${zoneWords(c, lo.x, l)}: ${eur(lo.t, l)}.`),
+            T(l, 'Uw eigen bedrag? Kies hierboven uw zone, of zoek op adres.', 'Your own amount? Choose your zone above, or search by address.')].join('\n'),
+          rows: [[T(l, 'Zones waar u op dat moment niets betaalt', 'Zones where you pay nothing at that time'), `${formatNumber(free, 0, l)} / ${formatNumber(all.length, 0, l)}`]],
           note: T(l, `Tarieven en tijden uit het Nationaal Parkeer Register (RDW, de Rijksdienst voor het Wegverkeer), stand van ${read(l)}.`, `Rates and hours from the National Parking Register (RDW, the Dutch vehicle authority), as of ${read(l)}.`),
         };
       }
@@ -167,7 +181,7 @@ function kostenSpec(l: Lang, a?: Args): ToolSpec {
       if (cheapest && cheapest.a < r.total) lines.push(T(l, `Een ${cheapest.l.toLowerCase()} van ${eur(cheapest.a, l)} is hier goedkoper.`, `A ${cheapest.l} ticket of ${eur(cheapest.a, l)} is cheaper here.`));
       return {
         label: T(l, `Parkeerkosten in ${c.n}`, `Parking cost in ${c.n}`), value: eur(r.total, l),
-        hyp: `${when}, ${K.inZone(z.n)}`,
+        hyp: `${when}, ${inZoneW(c, z, l)}`,
         sub: lines.join('\n'), rows, table: weekTable(c, z, l),
         note: T(l, `Tarieven en tijden uit het Nationaal Parkeer Register (RDW, de Rijksdienst voor het Wegverkeer), stand van ${read(l)}. Zonder transactiekosten van de parkeerapp. De automaat of app ter plaatse beslist.`, `Rates and hours from the National Parking Register (RDW, the Dutch vehicle authority), as of ${read(l)}. Parking app fees not included. The meter or app on the spot decides.`),
       };
@@ -197,7 +211,7 @@ function gratisSpec(l: Lang, a?: Args): ToolSpec {
       };
       const w = K.winAt(c, z, d, st), free = K.freeDays(c, z);
       return {
-        label: w ? T(l, `In ${K.inZone(z.n)} gratis vanaf`, `In ${K.inZone(z.n)}, free from`) : T(l, `In ${K.inZone(z.n)}`, `In ${K.inZone(z.n)}`),
+        label: w ? T(l, `In ${inZoneW(c, z, l)} gratis vanaf`, `In ${inZoneW(c, z, l)}, free from`) : T(l, `In ${inZoneW(c, z, l)}`, `In ${inZoneW(c, z, l)}`),
         value: w ? nextFreeText(c, z, d, st, l) : T(l, 'Nu gratis', 'Free now'),
         hyp: T(l, `Op ${dayName(d, l)} om ${hhmm(st)} in ${c.n}`, `On ${dayName(d, l)} at ${hhmm(st)} in ${c.n}`),
         sub: w ? T(l, `Op dit moment betaalt u hier ${perU(K.hourly(c, w[3]), l)}. Daarna is het gratis tot de volgende betaaltijd.`, `Right now you pay ${perU(K.hourly(c, w[3]), l)} here. After that it is free until the next paid period.`)
@@ -221,11 +235,17 @@ function dagkaartSpec(l: Lang, a?: Args): ToolSpec {
       const when = T(l, `${duree(dur, l)} vanaf ${hhmm(st)} op ${dayName(d, l)}`, `${duree(dur, l)} from ${hhmm(st)} on ${dayName(d, l)}`);
       const zs = K.streetZones(c);
       const withDay = zs.filter((x) => x.p.some((p) => K.isDayTicket(p.l)));
-      if (!z) {
-        const tick = withDay.map((x) => ({ x, p: x.p.find((p) => K.isDayTicket(p.l))! })).sort((p, q) => p.p.a - q.p.a);
-        const lo = tick[0], hi = tick[tick.length - 1];
-        const rows: Array<[string, string]> = lo ? [[T(l, `Goedkoopste: ${K.zoneName(lo.x.n)}`, `Cheapest: ${K.zoneName(lo.x.n)}`), eur(lo.p.a, l)]] : [[T(l, 'Dagkaart', 'Day ticket'), T(l, 'geen in het register', 'none in the register')]];
-        if (hi && hi !== lo) rows.push([T(l, `Duurste: ${K.zoneName(hi.x.n)}`, `Dearest: ${K.zoneName(hi.x.n)}`), eur(hi.p.a, l)]);
+      const tick = withDay.map((x) => ({ x, p: x.p.find((p) => K.isDayTicket(p.l))! })).sort((p, q) => p.p.a - q.p.a);
+      const lo = tick[0], hi = tick[tick.length - 1];
+      const spread: Array<[string, string]> = [];
+      if (lo) spread.push([T(l, `Goedkoopste dagkaart: ${zoneWords(c, lo.x, l)}`, `Cheapest day ticket: ${zoneWords(c, lo.x, l)}`), eur(lo.p.a, l)]);
+      if (hi && hi !== lo) spread.push([T(l, `Duurste dagkaart: ${zoneWords(c, hi.x, l)}`, `Dearest day ticket: ${zoneWords(c, hi.x, l)}`), eur(hi.p.a, l)]);
+      // Testeurs 2026-11-14 (4e tour) : sans zone, « 9 van 9 » ne répondait pas à « vanaf welk uur loont hij? ». La réponse
+      // est donnée pour le centre (la zone que prend le chapeau de la page), sinon pour la dagkaart la moins chère.
+      const centre = defaultZone(c), implicit = !z;
+      const zz = z ?? (withDay.includes(centre) ? centre : lo?.x);
+      if (!zz) {
+        const rows: Array<[string, string]> = [[T(l, 'Dagkaart', 'Day ticket'), T(l, 'geen in het register', 'none in the register')]];
         return {
           label: T(l, `Zones met een dagkaart in ${c.n}`, `Zones with a day ticket in ${c.n}`),
           value: T(l, `${formatNumber(withDay.length, 0, l)} van ${formatNumber(zs.length, 0, l)}`, `${formatNumber(withDay.length, 0, l)} of ${formatNumber(zs.length, 0, l)}`),
@@ -234,14 +254,14 @@ function dagkaartSpec(l: Lang, a?: Args): ToolSpec {
           rows,
         };
       }
-      const r = K.stay(c, z, d, st, dur), best = z.p.find((p) => K.isDayTicket(p.l)) ?? z.p[0];
+      const r = K.stay(c, zz, d, st, dur), best = zz.p.find((p) => K.isDayTicket(p.l)) ?? zz.p[0];
       if (!best) return {
         label: T(l, 'Per uur betalen, over deze tijd', 'Paying by the hour, for this stay'), value: eur(r.total, l),
-        hyp: `${when}, ${K.inZone(z.n)}`,
+        hyp: `${when}, ${inZoneW(c, zz, l)}`,
         sub: T(l, `In deze zone staat geen dagkaart in het register. In ${c.n} hebben ${formatNumber(withDay.length, 0, l)} zones er wel een.`, `No day ticket is registered for this zone. In ${c.n}, ${formatNumber(withDay.length, 0, l)} zones have one.`),
         rows: [[T(l, 'Betaalde tijd', 'Paid time'), duree(r.paid, l)]],
       };
-      const be = K.breakEven(c, z, d, st, best.a);
+      const be = K.breakEven(c, zz, d, st, best.a);
       const kaart = r.total > best.a;
       // Testeurs 2026-11-14 (3e tour) : « Betaal per uur: u bespaart € 7,50 » se lisait « 7,50 € de l'heure ». Le grand
       // chiffre est ce que l'on paie avec l'option la moins chère ; l'écart et les deux prix sont dits en toutes lettres,
@@ -250,12 +270,13 @@ function dagkaartSpec(l: Lang, a?: Args): ToolSpec {
         : T(l, `Per uur betalen is ${eur(best.a - r.total, l)} goedkoper dan de dagkaart.`, `Paying by the hour is ${eur(best.a - r.total, l)} cheaper than the day ticket.`)];
       if (be) lines.push(T(l, `De dagkaart wordt voordeliger vanaf ${duree(be, l)} parkeren, bij aankomst om ${hhmm(st)}.`, `The day ticket pays off from ${duree(be, l)} of parking, arriving at ${hhmm(st)}.`));
       else lines.push(T(l, 'Op deze dag haalt het uurtarief de dagkaart niet in.', 'On this day the hourly rate never catches up with the day ticket.'));
+      if (implicit) lines.unshift(T(l, `Voorbeeld voor ${zz === centre ? 'de duurste zone, zoals in de tekst bovenaan' : 'de goedkoopste dagkaart'}. Kies hierboven uw zone voor uw eigen uitkomst.`, `Example for ${zz === centre ? 'the dearest zone, as in the text at the top' : 'the cheapest day ticket'}. Choose your zone above for your own result.`));
       return {
         label: kaart ? T(l, 'Goedkoopst: de dagkaart', 'Cheapest: the day ticket') : T(l, 'Goedkoopst: per uur betalen', 'Cheapest: paying by the hour'),
         value: eur(Math.min(r.total, best.a), l),
-        hyp: `${when}, ${K.inZone(z.n)}`,
+        hyp: `${when}, ${inZoneW(c, zz, l)}`,
         sub: lines.join('\n'),
-        rows: [[T(l, 'Betaalde tijd', 'Paid time'), duree(r.paid, l)], [T(l, 'Per uur betalen', 'Paying by the hour'), eur(r.total, l)], ...z.p.filter((p) => K.isDayTicket(p.l)).slice(0, 3).map((p) => [p.l, eur(p.a, l)] as [string, string])],
+        rows: [[T(l, 'Betaalde tijd', 'Paid time'), duree(r.paid, l)], [T(l, 'Per uur betalen', 'Paying by the hour'), eur(r.total, l)], ...zz.p.filter((p) => K.isDayTicket(p.l)).slice(0, 3).map((p) => [p.l, eur(p.a, l)] as [string, string]), ...(implicit ? spread : [])],
         note: T(l, 'Een dagkaart geldt alleen in de zone en op de tijden die op de kaart of in de app staan.', 'A day ticket is valid only in the zone and at the times shown on the ticket or in the app.'),
       };
     },
@@ -291,7 +312,7 @@ function vergunningSpec(l: Lang, a?: Args): ToolSpec {
         sub: st.verg[l],
         rows: [
           [T(l, 'Bedrag in de verordening', 'Amount in the by-law'), `${eur(st.verg.bedrag, l)} ${perTxt(st.verg.per)}`],
-          [T(l, 'Voor hetzelfde geld parkeert u op straat', 'The same money buys street parking for'), visitorDays > 0 ? T(l, `${formatNumber(visitorDays, 0, l)} werkdagen van 8 uur`, `${formatNumber(visitorDays, 0, l)} 8-hour workdays`) : T(l, 'n.v.t.', 'n/a')],
+          [T(l, `Voor ${eur(total, l)} parkeert u in de duurste zone op straat`, `${eur(total, l)} buys street parking in the dearest zone for`), visitorDays > 0 ? T(l, `${formatNumber(visitorDays, 0, l)} werkdagen van 8 uur`, `${formatNumber(visitorDays, 0, l)} 8-hour workdays`) : T(l, 'n.v.t.', 'n/a')],
           [T(l, 'Naheffingsaanslag zonder vergunning (kosten)', 'Penalty assessment without a permit (costs)'), eur(st.nah, l) + (st.uur ? T(l, ' + 1 uur parkeergeld', ' + 1 hour of parking') : T(l, ' + het parkeergeld', ' + the parking fee'))],
         ],
         note: `${T(l, 'Een vergunning krijgt u alleen als de gemeente er een uitgeeft op uw adres; in veel wijken is er een wachtlijst.', 'You only get a permit if the municipality issues one for your address; many districts have a waiting list.')} ${nietGelezenText(l)}`,
@@ -312,9 +333,10 @@ function naheffingSpec(l: Lang, a?: Args): ToolSpec {
       const known = !!st;
       const kosten = known ? st.nah : NAH_MAX;
       // Sans zone choisie, l'heure de parkeergeld ajoutée (Rotterdam…) n'est pas connue : on donne la fourchette de la ville.
-      const hs = K.streetZones(c).map((x) => x.h).filter((h) => h > 0);
+      // Même fourchette que la liste « Uurtarief per stad » de l'accueil (testeurs 2026-11-14, 4e tour : Rotterdam € 1,48 là, € 1,70 ici).
+      const info = K.cityInfo(c.s), hs = info.hMax > 0 ? [info.hMin, info.hMax] : [];
       const extra = st?.uur && z ? z.h : 0;
-      const zn = z ? K.inZone(z.n) : '';
+      const zn = z ? inZoneW(c, z, l) : '';
       // Le wettelijke maximum porte sur les kosten seules ; le total peut le dépasser du parkeergeld (testeurs
       // 2026-11-14 : « maximum € 82,00 » puis « € 89,20 »). Chaque ligne dit donc ce qu'elle mesure.
       const rows: Array<[string, string]> = [
@@ -358,8 +380,8 @@ function prSpec(l: Lang, a?: Args): ToolSpec {
       return {
         label: T(l, `Goedkoopste P+R in ${c.n}`, `Cheapest P+R in ${c.n}`), value: best ? eur(best.price, l) : T(l, 'geen', 'none'),
         hyp: T(l, `${duree(dur, l)} vanaf ${hhmm(st)} op ${dayName(d, l)}, reis met bus, tram of trein niet meegerekend`, `${duree(dur, l)} from ${hhmm(st)} on ${dayName(d, l)}, public transport fare not included`),
-        sub: best ? T(l, `${best.z.n}. Dezelfde tijd in het centrum (${K.zoneName(centre.n)}): ${eur(street, l)}.`, `${best.z.n}. The same time in the centre (${K.zoneName(centre.n)}): ${eur(street, l)}.`) : '',
-        rows: [[T(l, 'Centrum, zelfde tijd', 'Centre, same time'), eur(street, l)], [T(l, 'Verschil', 'Difference'), best ? eur(Math.max(0, street - best.price), l) : T(l, 'n.v.t.', 'n/a')]],
+        sub: best ? T(l, `${best.z.n}. Dezelfde parkeertijd (${duree(dur, l)}) in het centrum, ${zoneWords(c, centre, l)}: ${eur(street, l)}.`, `${best.z.n}. The same stay (${duree(dur, l)}) in the centre, ${zoneWords(c, centre, l)}: ${eur(street, l)}.`) : '',
+        rows: [[T(l, `Centrum, ${duree(dur, l)} vanaf ${hhmm(st)}`, `Centre, ${duree(dur, l)} from ${hhmm(st)}`), eur(street, l)], [T(l, 'Verschil', 'Difference'), best ? eur(Math.max(0, street - best.price), l) : T(l, 'n.v.t.', 'n/a')]],
         table: { caption: T(l, `P+R-terreinen in ${c.n} in het register`, `P+R sites in ${c.n} in the register`), headers: ['P+R', T(l, 'Prijs', 'Price')], align: ['l', 'r'], rows: prs.map((p) => [p.z.n, eur(p.price, l)]) },
         note: T(l, 'Het P+R-tarief geldt vaak alleen als u met bus, tram of trein naar het centrum reist; de voorwaarden staan bij de ingang en in de app.', 'The P+R fare often applies only with a public transport trip to the centre; the conditions are at the entrance and in the app.'),
       };

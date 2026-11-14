@@ -19,3 +19,5 @@ PY
 )"
 echo "NPR_READ=$NPR_READ"
 python3 scripts/build-npr.py
+# Wijk de chaque zone (PDOK) ; sans réseau, wijken.json précédent gardé (|| true).
+python3 scripts/build-wijken.py || true

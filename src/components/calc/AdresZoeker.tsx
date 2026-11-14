@@ -50,7 +50,7 @@ export default function AdresZoeker({ lang, target, cityLinks = {}, stay = false
         <input id={`adres-${lang}`} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={VOORBEELD.adres} aria-describedby={`adres-${lang}-hulp`} autoComplete="street-address" className="min-h-12 w-full min-w-0 rounded-lg border border-navy-300 bg-white px-3 text-base text-navy-900" />
         <button type="submit" disabled={busy} className="min-h-12 shrink-0 rounded-lg bg-accent-700 px-4 font-semibold text-white hover:bg-accent-800">{nl ? 'Zoek' : 'Search'}</button>
       </div>
-      <p id={`adres-${lang}-hulp`} className="mt-0.5 text-xs leading-tight text-navy-600">{nl ? `Bijv. ${VOORBEELD.adres}. ${ZONDER_KAART.join(' en ')}: kies de zone in de lijst (geen kaart).` : `E.g. ${VOORBEELD.adres}. ${ZONDER_KAART.join(' and ')}: pick the zone from the list (no map).`}</p>
+      <p id={`adres-${lang}-hulp`} className="mt-0.5 text-xs leading-tight text-navy-600">{nl ? `Bijv. ${VOORBEELD.adres}. In ${ZONDER_KAART.join(' en ')} werkt zoeken op adres niet: kies daar uw zone in de lijst.` : `E.g. ${VOORBEELD.adres}. In ${ZONDER_KAART.join(' and ')} address search does not work: pick your zone from the list there.`}</p>
       {msg && <p className="mt-2 text-sm text-navy-800" aria-live="polite">{msg}{link && <> <a href={link} className="font-medium text-accent-700 underline">{nl ? 'Open de rekenhulp van deze stad' : "Open this city's calculator"}</a></>}</p>}
     </form>
   );

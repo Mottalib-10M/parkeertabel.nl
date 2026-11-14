@@ -1,5 +1,5 @@
 import { definePage } from '../../lib/page-types';
-import { num, K, cityLink, COVER, N_CITIES } from './_f';
+import { foldTable, num, K, cityLink, COVER, N_CITIES } from './_f';
 
 type Lg = 'nl' | 'en';
 const all = COVER.map((s) => { const c = K.city(s), zs = K.streetZones(c);
@@ -31,7 +31,7 @@ export default definePage({
     ],
     body: (h) => `<h2>Gratis parkeren op zondag en ’s avonds per stad</h2>
 <p>Per stad het aantal betaalde straatzones in het register, hoeveel daarvan op zondag de hele dag gratis zijn, en hoeveel op een dinsdag om 20:00. Gesorteerd op het aandeel gratis zondagen. P+R-terreinen en garages tellen niet mee. Een hoog aandeel betekent niet dat het centrum gratis is: vaak betaalt u juist daar wel.</p>
-${h.table(['Stad', 'Zones', 'Zondag gratis', 'Dinsdag 20:00 gratis'], rows(h, 'nl'), `Gratis zones op zondag en dinsdagavond (Nationaal Parkeer Register, ${NC('nl')} steden)`, ['l', 'r', 'r', 'r'])}
+${foldTable(bySun.length, 'nl', h.table(['Stad', 'Zones', 'Zondag gratis', 'Dinsdag 20:00 gratis'], rows(h, 'nl'), `Gratis zones op zondag en dinsdagavond (Nationaal Parkeer Register, ${NC('nl')} steden)`, ['l', 'r', 'r', 'r']))}
 <h2>Hoe wij tellen</h2>
 <p>Een zone telt als gratis op zondag als het register voor die dag geen enkel betaald tijdvak noemt. Voor de avond kijken wij of er op dinsdag om 20:00 een betaald tijdvak loopt. Feestdagen, koopzondagen en evenementen kunnen anders zijn; het register noemt die soms apart, en dan geldt het bord. Ook garages en P+R-terreinen hebben eigen tijden; die tellen hier niet mee.</p>
 <h2>Liever niet zoeken?</h2>
@@ -52,7 +52,7 @@ ${h.table(['Stad', 'Zones', 'Zondag gratis', 'Dinsdag 20:00 gratis'], rows(h, 'n
     ],
     body: (h) => `<h2>Free parking on Sunday and in the evening by city</h2>
 <p>For each city, the number of paid street zones in the register, how many are free all day on Sunday, and how many on a Tuesday at 20:00. Sorted by the share of free Sundays. Park-and-ride sites and garages are not counted. A high share does not mean the centre is free: that is often exactly where you do pay.</p>
-${h.table(['City', 'Zones', 'Free on Sunday', 'Free Tuesday 20:00'], rows(h, 'en'), `Free zones on Sunday and Tuesday evening (National Parking Register, ${NC('en')} cities)`, ['l', 'r', 'r', 'r'])}
+${foldTable(bySun.length, 'en', h.table(['City', 'Zones', 'Free on Sunday', 'Free Tuesday 20:00'], rows(h, 'en'), `Free zones on Sunday and Tuesday evening (National Parking Register, ${NC('en')} cities)`, ['l', 'r', 'r', 'r']))}
 <h2>How we count</h2>
 <p>A zone counts as free on Sunday if the register lists no paid time slot for that day. For the evening we check whether a paid slot runs on Tuesday at 20:00. Public holidays, shopping Sundays and events can differ; the register sometimes lists them separately, and then the sign applies. Garages and park-and-ride sites have their own hours too; they are not counted here.</p>
 <h2>Rather not wait?</h2>

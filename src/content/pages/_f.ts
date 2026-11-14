@@ -46,3 +46,6 @@ export { COVER, N_CITIES, N_ZONES } from '../../lib/couverture';
 export const cityLink = (h: { a: (id: string, t: string) => string }, slug: string, name: string) => (CITY_PAGES.includes(slug) ? h.a(slug, name) : name);
 /** Coût annuel d'une vergunning (bedrag + per). */
 export const yearOf = (x: { bedrag: number; per: string }) => (x.per === 'maand' ? x.bedrag * 12 : x.per === 'kwartaal' ? x.bedrag * 4 : x.bedrag);
+/** Grand tableau par ville replié sous une ligne cliquable (testeurs 2026-11-14, 4e tour : 24 fiches empilées sur
+ *  téléphone, trois testeurs sur trois). Le tableau reste dans le HTML. */
+export const foldTable = (n: number, l: L, table: string) => `<details class="fold"><summary><strong>${l === 'nl' ? `Tabel met alle ${n} steden` : `Table with all ${n} cities`}</strong></summary>${table}</details>`;
