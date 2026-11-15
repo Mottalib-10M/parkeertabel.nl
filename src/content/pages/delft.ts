@@ -28,7 +28,7 @@ ${h.table(['Uurtarief', 'Gebieden', 'Bijvoorbeeld'], rateRows('delft', 'nl'), 'S
 <p>Delft levert de grenzen van de gebieden aan het register. Met de adreszoeker bovenaan vindt u zo het gebied van een adres. In gebied H stopt het betalen al om acht uur ’s avonds, en daar is het maximale dagtarief lager.</p>
 <h2>Betaaltijden in de binnenstad</h2>
 <p>Laat beginnen, laat stoppen. Een vroege ochtend in de binnenstad is gratis, een avond daar niet: tot middernacht loopt de meter door, ook op zondag.</p>
-${h.table(['Dag', 'Betaald (uurtarief)'], weekRows('delft', 'nl'), `Betaaltijden in ${f.z.n}`)}
+${h.table(['Dag', 'Betaald (uurtarief)'], weekRows('delft', 'nl'), `Betaaltijden in ${f.zn}`)}
 <h2>Dagtarief en naheffing</h2>
 <p>Bereken met de ${h.a('dagkaart', 'dagkaart-rekenhulp')} vanaf welk uur het maximum geldt. Voor de naheffing tonen wij het wettelijke maximum van ${h.eur(NAH_MAX)}, zoals de ${h.src('vo_almere', 'verordening van Almere')} het formuleert; het Delftse bedrag hebben wij nog niet gecontroleerd. Meer over de buurstad op ${h.a('den-haag', 'parkeren in Den Haag')}.</p>`,
   },
@@ -51,7 +51,7 @@ ${h.table(['Hourly rate', 'Areas', 'For example'], rateRows('delft', 'en'), 'Str
 <p>Delft supplies its area outlines to the register. With the address search at the top you find the area of an address. In area H paying already stops at eight in the evening, and the maximum day rate there is lower.</p>
 <h2>Paid hours in the old town</h2>
 <p>Late to start, late to stop. An early morning in the old town is free, an evening there is not: the meter runs until midnight, Sunday included.</p>
-${h.table(['Day', 'Paid hours (hourly rate)'], weekRows('delft', 'en'), `Paid hours in ${f.z.n}`)}
+${h.table(['Day', 'Paid hours (hourly rate)'], weekRows('delft', 'en'), `Paid hours in ${f.zn}`)}
 <h2>Day rate and penalties</h2>
 <p>Use the ${h.a('dagkaart', 'day ticket calculator')} to see from which hour the maximum applies. For penalties we show the legal maximum of ${h.eur(NAH_MAX)}, as the ${h.src('vo_almere', 'Almere by-law')} puts it; we have not yet checked the Delft amount. More on the neighbouring city on ${h.a('den-haag', 'parking in The Hague')}.</p>`,
   },

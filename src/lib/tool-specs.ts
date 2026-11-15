@@ -40,21 +40,42 @@ export function defaultZone(c: K.City): K.Zone {
 /** Libellé d'une zone dans la liste : son nom sans les heures abrégées, puis le tarif horaire en clair. Les heures
  *  payantes de la zone choisie s'affichent en mots sous la liste (testeurs 2026-11-14, 3e tour : « Tariefzone 1
  *  ma-za 09-24 zo 12-24 (T11A) » ne disait rien). */
-/** Une zone en mots (testeurs 2026-11-14, 4e tour : « Tariefzone 1 (T11V) », « 10c max 60 po 60 » ne disaient rien) :
- *  la wijk (quartier du CBS, via PDOK) devant, le nom du registre entre parenthèses ; sans wijk, un nom qui n'est
- *  qu'un code est décrit par son tarif (« zone met € 0,10 per uur (10c max 60 po 60) »). `rate: false` dans les
- *  listes, qui disent déjà le tarif. */
-export function zoneWords(c: K.City, z: K.Zone, l: Lang, rate = true): string {
-  const code = K.zoneName(z.n), wk = K.wijkOf(c, z);
-  const flat = code.replace(/\s*\(\s*([^)]*?)\s*\)/g, ', $1');
-  if (wk) return code.toLowerCase().includes(wk.toLowerCase()) ? code : `${l === 'en' ? wk.replace(/ en omgeving$/, ' area') : wk} (${flat})`;
-  if (!rate || z.k !== 'straat' || z.h <= 0 || !K.isCodeName(z.n)) return code;
-  return T(l, `zone met ${perU(z.h, l)} (${flat})`, `zone at ${perU(z.h, l)} (${flat})`);
+/** Une zone en mots : la wijk (quartier du CBS, via PDOK) puis le nom lisible du registre, et le tarif en clair.
+ *  Testeurs 2026-11-14 : « Tariefzone 1 (T11V) », « Zuid Pijp (10c max 60 po 60) », « Wijk C. » ne disaient rien
+ *  (4e et 5e tours) ; le code du registre n'apparaît plus qu'en « registercode » dans la liste, pour départager.
+ *  `rate: false` dans les listes, qui disent déjà le tarif. */
+export function placeName(c: K.City, z: K.Zone, l: Lang): string {
+  // « Spaarndammerbuurt/Zeeheldenbuurt » ne se coupait pas sur téléphone : espaces autour de la barre.
+  const sl = (x?: string) => x?.replace(/\s*\/\s*/g, ' / ');
+  const wk = sl(K.wijkOf(c, z)), pn = sl(K.plainName(z.n)) ?? '';
+  const w = wk && l === 'en' ? wk.replace(/ en omgeving$/, ' area') : wk;
+  if (!w) return pn;
+  if (!pn || pn.toLowerCase().includes(w.toLowerCase())) return pn || w;
+  return w.toLowerCase().includes(pn.toLowerCase()) ? w : `${w}, ${pn}`;
 }
-/** « in … » : « zone X » quand le nom ne dit pas déjà ce que c'est. */
-export const inZoneW = (c: K.City, z: K.Zone, l: Lang) => { const w = zoneWords(c, z, l); return w === K.zoneName(z.n) ? K.inZone(z.n) : w; };
+/** Le tarif d'une zone en clair : « € 6,98 per uur », « € 0,10 tot € 6,98 per uur, op sommige tijden hooguit 1 uur ». */
+export function tariffText(c: K.City, z: K.Zone, l: Lang): string {
+  const paid = z.w.filter((w) => K.hourly(c, w[3]) > 0);
+  const hs = paid.map((w) => K.hourly(c, w[3])), lo = Math.min(...hs, z.h), hi = Math.max(...hs, z.h);
+  const rate = lo < hi ? T(l, `${eur(lo, l)} tot ${perU(hi, l)}`, `${eur(lo, l)} to ${perU(hi, l)}`) : perU(hi, l);
+  const caps = paid.map((w) => w[4]).filter((m) => m > 0);
+  if (!caps.length) return rate;
+  const max = duree(Math.min(...caps), l);
+  return caps.length === paid.length ? T(l, `${rate}, hooguit ${max}`, `${rate}, ${max} max`) : T(l, `${rate}, op sommige tijden hooguit ${max}`, `${rate}, ${max} max at some times`);
+}
+export function zoneWords(c: K.City, z: K.Zone, l: Lang, rate = true): string {
+  const place = placeName(c, z, l);
+  const tar = rate && z.k === 'straat' && z.h > 0 ? tariffText(c, z, l) : '';
+  if (place) return tar ? `${place} (${tar})` : place;
+  if (tar) return T(l, `zone met ${tar}`, `zone at ${tar}`);
+  return z.x ? T(l, 'zone met oplopend tarief', 'zone with a rising rate') : T(l, 'deze zone', 'this zone');
+}
+/** « in … » : zoneWords se lit déjà après « in » (« in Zuid Pijp (€ 6,98 per uur) », « in zone met € 8,01 per uur »). */
+export const inZoneW = (c: K.City, z: K.Zone, l: Lang) => zoneWords(c, z, l);
+/** Code du registre, sans le numéro de gemeente de tête (« 363_PRAR » → « PRAR »). */
+const regCode = (z: K.Zone) => z.i.replace(/^\d+_(?=\S)/, '');
 const zoneLabel = (c: K.City, z: K.Zone, l: Lang) => {
-  const name = z.k === 'pr' ? `P+R ${K.zoneName(z.n).replace(/^P\+R\s*/i, '')}` : zoneWords(c, z, l, false);
+  const name = z.k === 'pr' ? `P+R ${placeName(c, z, l).replace(/^P\+R\s*/i, '') || regCode(z)}` : placeName(c, z, l) || 'Zone';
   if (z.h > 0) return `${name} · ${perU(z.h, l)}`;
   if (z.x) return `${name} · ${T(l, 'oplopend tarief', 'rising rate')}`;
   return `${name} · ${T(l, 'dagkaart', 'day ticket')}`;
@@ -67,11 +88,11 @@ const zoneOpts = (l: Lang, kinds: Array<K.Zone['k']> = ['straat', 'pr']) => (v: 
   const zs = c.z.filter((z) => kinds.includes(z.k) && (z.w.length > 0 || z.p.length > 0));
   // Rue avant P+R, puis du tarif le plus haut (le centre) au plus bas, puis par nom.
   const list = [...zs].sort((a, b) => (a.k === b.k ? b.h - a.h || a.n.localeCompare(b.n, 'nl') : a.k === 'straat' ? -1 : 1));
-  // Deux zones du même libellé : le code du registre les départage.
+  // Deux zones du même libellé : le code du registre les départage, en petite mention « registercode ».
   const labels = list.map((z) => zoneLabel(c, z, l));
   const count = (xs: string[], x: string) => xs.filter((y) => y === x).length;
   return [{ value: GEEN_ZONE, label: T(l, `Kies uw zone in ${c.n}`, `Choose your zone in ${c.n}`) },
-    ...list.map((z, i) => ({ value: z.i, label: count(labels, labels[i]) > 1 ? `${labels[i]} (${z.i})` : labels[i] }))];
+    ...list.map((z, i) => ({ value: z.i, label: count(labels, labels[i]) > 1 || !placeName(c, z, l) ? `${labels[i]} · registercode ${regCode(z)}` : labels[i] }))];
 };
 const DAGEN_KORT: Record<Lang, string[]> = { nl: DAYS.nl, en: DAYS.en };
 /** Heures payantes d'une zone sur la semaine, en clair : « maandag tot en met zaterdag 09:00-24:00, zondag 12:00-24:00 ». */

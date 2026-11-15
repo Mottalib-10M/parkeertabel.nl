@@ -167,7 +167,8 @@ describe('zone : pas de valeur par défaut, libellés lisibles', () => {
     const spec = getTool('kosten', 'nl');
     const opts = optsOf(spec.inputs.find((i) => i.id === 'zone') as SelectIn, { stad: 'amsterdam' });
     const t11a = opts.find((o) => o.value === 'T11A')!;
-    expect(t11a.label).toBe(`Tariefzone 1 (T11A) · ${formatMoney(8.05, 2, 'nl')} per uur`);
+    // 5e tour : plus de « Tariefzone 1 (T11A) » ; le code ne reste qu'en mention « registercode ».
+    expect(t11a.label).toBe(`Zone · ${formatMoney(8.05, 2, 'nl')} per uur · registercode T11A`);
     for (const o of opts) expect(o.label, o.label).not.toMatch(/\b(ma|di|wo|do|vr|za|zo)-(ma|di|wo|do|vr|za|zo)\s+\d/);
   });
   it('les heures payantes de la zone choisie sont dites en clair sous la liste', () => {

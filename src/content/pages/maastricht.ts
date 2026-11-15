@@ -28,7 +28,7 @@ ${h.table(['Uurtarief', 'Zones', 'Bijvoorbeeld'], rateRows('maastricht', 'nl'), 
 <p>Omdat de gemeente geen zonegrenzen aan het register levert, kiest u de zone zelf in de lijst. De naam, bijvoorbeeld Centrum of Wyck, staat op de automaat en in de parkeerapp. Twijfelt u, kies dan de duurste zone in de buurt: dan valt het bedrag niet tegen.</p>
 <h2>Betaaltijden in het centrum</h2>
 <p>Maastricht stopt vroeg met betalen. Een avond in de stad kost op straat niets als u na zessen komt. Op zondag begint het betalen pas om twaalf uur, zodat ook de zondagochtend vrij is.</p>
-${h.table(['Dag', 'Betaald (uurtarief)'], weekRows('maastricht', 'nl'), `Betaaltijden in ${f.z.n}`)}
+${h.table(['Dag', 'Betaald (uurtarief)'], weekRows('maastricht', 'nl'), `Betaaltijden in ${f.zn}`)}
 <h2>Naheffing en vergunning</h2>
 <p>De kosten van een naheffingsaanslag zijn ${h.eur(st.nah)}, verhoogd met het tarief van het eerste uur ter plaatse. ${st.verg.nl}. Bron: de ${h.src('vo_maastricht', 'verordening parkeerregulering en parkeerbelastingen van Maastricht')}. Zie ook ${h.a('gratis', 'gratis parkeren per stad')}.</p>`,
   },
@@ -51,7 +51,7 @@ ${h.table(['Hourly rate', 'Zones', 'For example'], rateRows('maastricht', 'en'),
 <p>Because the municipality supplies no zone outlines to the register, you pick the zone yourself from the list. The name, for example Centrum or Wyck, is on the meter and in the parking app. If in doubt, pick the dearest zone nearby, so the amount holds no surprise.</p>
 <h2>Paid hours in the centre</h2>
 <p>Maastricht stops charging early. An evening in town costs nothing on the street if you arrive after six. On Sunday paying only starts at noon, so Sunday morning is free too.</p>
-${h.table(['Day', 'Paid hours (hourly rate)'], weekRows('maastricht', 'en'), `Paid hours in ${f.z.n}`)}
+${h.table(['Day', 'Paid hours (hourly rate)'], weekRows('maastricht', 'en'), `Paid hours in ${f.zn}`)}
 <h2>Penalties and permits</h2>
 <p>The costs of a parking penalty are ${h.eur(st.nah)}, increased by the local first-hour rate. ${st.verg.en}. Source: Maastricht’s ${h.src('vo_maastricht', 'parking regulation and tax by-law')}. See also ${h.a('gratis', 'free parking by city')}.</p>`,
   },

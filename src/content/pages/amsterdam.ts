@@ -2,7 +2,6 @@ import { definePage } from '../../lib/page-types';
 import { facts, rateRows, weekRows, eur, num, hhmm, NAH_MAX } from './_f';
 
 const f = facts('amsterdam');
-const T11 = f.z;
 const ticket = f.best;
 
 export default definePage({
@@ -27,7 +26,7 @@ export default definePage({
 ${h.table(['Uurtarief', 'Zones', 'Bijvoorbeeld'], rateRows('amsterdam', 'nl'), 'Straatzones in Amsterdam per uurtarief (Nationaal Parkeer Register)', ['r', 'r', 'l'])}
 <p>De goedkoopste regels, een paar cent per uur, gelden vooral voor bezoekers van bewoners en voor speciale plekken. Ze zijn niet bedoeld voor wie zomaar in de stad parkeert.</p>
 <h2>Betaaltijden in tariefzone 1</h2>
-<p>In ${T11.n} betaalt u bijna de hele dag. Alleen de nacht en de zondagochtend zijn gratis.</p>
+<p>In de binnenstad (tariefzone 1) betaalt u bijna de hele dag. Alleen de nacht en de zondagochtend zijn gratis.</p>
 ${h.table(['Dag', 'Betaald (uurtarief)'], weekRows('amsterdam', 'nl'), 'Betaaltijden in de duurste zone van Amsterdam')}
 <h2>Dagkaart, avondkaart of per uur?</h2>
 <p>In ${num(f.tickets, 'nl')} Amsterdamse zones staat een dagkaart, avondkaart of zondagkaart in het register. Bij een kort bezoek betaalt u per uur; vanaf een paar uur wint de kaart. De ${h.a('dagkaart', 'dagkaart-rekenhulp')} zegt vanaf welk uur.</p>
@@ -51,7 +50,7 @@ ${h.table(['Dag', 'Betaald (uurtarief)'], weekRows('amsterdam', 'nl'), 'Betaalti
 ${h.table(['Hourly rate', 'Zones', 'For example'], rateRows('amsterdam', 'en'), 'Street zones in Amsterdam by hourly rate (National Parking Register)', ['r', 'r', 'l'])}
 <p>The cheapest lines, a few cents an hour, mostly apply to residents' visitors and special bays. They are not meant for drivers who just park in the city.</p>
 <h2>Paid hours in tariff zone 1</h2>
-<p>In ${T11.n} you pay nearly all day. Only the night and Sunday morning are free.</p>
+<p>In the old town (tariff zone 1) you pay nearly all day. Only the night and Sunday morning are free.</p>
 ${h.table(['Day', 'Paid hours (hourly rate)'], weekRows('amsterdam', 'en'), "Paid hours in Amsterdam's most expensive zone")}
 <h2>Day ticket, evening ticket or by the hour?</h2>
 <p>In ${num(f.tickets, 'en')} Amsterdam zones the register lists a day, evening or Sunday ticket. For a short visit you pay by the hour; after a few hours the ticket wins. The ${h.a('dagkaart', 'day ticket calculator')} tells you from which hour.</p>

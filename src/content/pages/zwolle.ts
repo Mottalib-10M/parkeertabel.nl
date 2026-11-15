@@ -29,7 +29,7 @@ ${h.table(['Uurtarief (eerste uur)', 'Zones', 'Bijvoorbeeld'], rateRows('zwolle'
 <p>Zwolle levert voor ${num(f.info.geo, 'nl')} zones grenzen aan het register. Voor de rest kiest u de zone of het terrein zelf in de lijst; het nummer van de zone staat op de automaat.</p>
 <h2>Betaaltijden in zone 1 Centrum</h2>
 <p>Doordeweeks lang, op zondag kort: alleen de middag is betaald. De avond tot elf uur telt in zone 1 wel mee.</p>
-${h.table(['Dag', 'Betaald (uurtarief)'], weekRows('zwolle', 'nl'), `Betaaltijden in ${f.z.n}`)}
+${h.table(['Dag', 'Betaald (uurtarief)'], weekRows('zwolle', 'nl'), `Betaaltijden in ${f.zn}`)}
 <h2>Dagkaart, vergunning en naheffing</h2>
 <p>Voor een lange dag is een ${h.a('dagkaart', 'dagkaart')} op een terrein de voor de hand liggende keuze. ${st.verg.nl}. Een naheffing kost ${h.eur(st.nah)} aan kosten. Bron: de ${h.src('vo_zwolle', 'verordening parkeerbelastingen Zwolle 2026')}.</p>`,
   },
@@ -52,7 +52,7 @@ ${h.table(['Hourly rate (first hour)', 'Zones', 'For example'], rateRows('zwolle
 <p>Zwolle supplies outlines to the register for ${num(f.info.geo, 'en')} zones. For the rest you pick the zone or car park yourself from the list; the zone number is on the meter.</p>
 <h2>Paid hours in zone 1 Centrum</h2>
 <p>Long on weekdays, short on Sunday: only the afternoon is paid. The evening until eleven does count in zone 1.</p>
-${h.table(['Day', 'Paid hours (hourly rate)'], weekRows('zwolle', 'en'), `Paid hours in ${f.z.n}`)}
+${h.table(['Day', 'Paid hours (hourly rate)'], weekRows('zwolle', 'en'), `Paid hours in ${f.zn}`)}
 <h2>Day tickets, permits and penalties</h2>
 <p>For a long day, a ${h.a('dagkaart', 'day ticket')} in a car park is the obvious choice. ${st.verg.en}. A penalty carries ${h.eur(st.nah)} in costs. Source: the ${h.src('vo_zwolle', 'Zwolle 2026 parking tax by-law')}.</p>`,
   },

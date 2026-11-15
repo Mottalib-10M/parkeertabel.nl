@@ -1,6 +1,6 @@
 /** Chiffres partagés par les pages (non chargé comme page : préfixe _). Tout vient du registre NPR ou de params-2026.json. */
 import * as K from '../../lib/engine/parking';
-import { defaultZone, STEDEN, NAH_MAX, spansText, dayName } from '../../lib/tool-specs';
+import { defaultZone, STEDEN, NAH_MAX, spansText, dayName, placeName } from '../../lib/tool-specs';
 import { formatMoney, formatNumber, displayDate, hhmm, duree } from '../../lib/format';
 import P from '../../data/params-2026.json';
 export type L = 'nl' | 'en';
@@ -24,14 +24,17 @@ export function facts(slug: string) {
   const byRate = rates.map((h) => ({ h, n: zs.filter((x) => x.h === h).length }));
   const odd = zs.filter((x) => x.x);
   const st = STEDEN[slug];
-  return { c, info, z, zs, sundayFree, eveningFree, tue, sat, sun, cost2h, cost4h, cost8h, tickets, prs, rates, byRate, odd, st,
+  // Nom de la zone centrale dans le texte : le nom lisible du registre, sinon sa wijk (testeurs 2026-11-14, 5e tour :
+  // « Tariefzone 1 ma-za 09-24 zo 12-24 (T11A) » n'est pas un nom).
+  const zn = K.plainName(z.n) || placeName(c, z, 'nl') || 'centrum';
+  return { c, info, z, zn, zs, sundayFree, eveningFree, tue, sat, sun, cost2h, cost4h, cost8h, tickets, prs, rates, byRate, odd, st,
     best: z.p[0], hours: K.paidHoursWeek(c, z), freeDays: K.freeDays(c, z) };
 }
 /** Tableau « zones et tarifs » : les zones de rue d'une ville regroupées par tarif horaire (jusqu'à `max` lignes). */
 export function rateRows(slug: string, l: L, max = 8): string[][] {
   const f = facts(slug);
   return f.byRate.slice(0, max).map(({ h, n }) => {
-    const ex = f.zs.filter((x) => x.h === h).slice(0, 3).map((x) => x.n).join(', ');
+    const ex = [...new Set(f.zs.filter((x) => x.h === h).map((x) => (K.wijkOf(f.c, x) ?? K.plainName(x.n)).replace(/\s*\/\s*/g, ' / ')).filter(Boolean))].slice(0, 3).join(', ');
     return [eur(h, l), num(n, l), ex];
   });
 }

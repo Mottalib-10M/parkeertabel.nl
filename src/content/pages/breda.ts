@@ -29,7 +29,7 @@ ${h.table(['Uurtarief', 'Zones', 'Bijvoorbeeld'], rateRows('breda', 'nl'), 'Stra
 <p>Breda levert voor ${num(f.info.geo, 'nl')} van de ${num(f.zs.length, 'nl')} zones grenzen aan het register. Voor de meeste adressen kiest u de zone dus zelf in de lijst; de straatnaam in de zonenaam helpt daarbij.</p>
 <h2>Betaaltijden in het centrum</h2>
 <p>Breda betaalt lang: van de ochtend tot één uur ’s nachts, zeven dagen per week. Een avond in de horeca rond de Grote Markt kost zo parkeergeld tot de laatste ronde.</p>
-${h.table(['Dag', 'Betaald (uurtarief)'], weekRows('breda', 'nl'), `Betaaltijden in de zone ${f.z.n}`)}
+${h.table(['Dag', 'Betaald (uurtarief)'], weekRows('breda', 'nl'), `Betaaltijden in de zone ${f.zn}`)}
 <h2>Vergunning en naheffing in Breda</h2>
 <p>${st.verg.nl}. De kosten van een naheffing zijn ${h.eur(st.nah)}. Bron: de ${h.src('vo_breda', 'verordening parkeerbelastingen Breda 2026')}. Vergelijk met andere steden op ${h.a('vergunning', 'de vergunningspagina')} en bij ${h.a('naheffing', 'naheffingsaanslag')}.</p>`,
   },
@@ -52,7 +52,7 @@ ${h.table(['Hourly rate', 'Zones', 'For example'], rateRows('breda', 'en'), 'Str
 <p>Breda supplies outlines to the register for ${num(f.info.geo, 'en')} of its ${num(f.zs.length, 'en')} zones. For most addresses you therefore pick the zone yourself from the list; the street name inside the zone name helps.</p>
 <h2>Paid hours in the centre</h2>
 <p>Breda charges for a long time: from the morning until one at night, seven days a week. An evening in the bars around the Grote Markt therefore costs parking money until last orders.</p>
-${h.table(['Day', 'Paid hours (hourly rate)'], weekRows('breda', 'en'), `Paid hours in the zone ${f.z.n}`)}
+${h.table(['Day', 'Paid hours (hourly rate)'], weekRows('breda', 'en'), `Paid hours in the zone ${f.zn}`)}
 <h2>Permits and penalties in Breda</h2>
 <p>${st.verg.en}. The costs of a penalty are ${h.eur(st.nah)}. Source: the ${h.src('vo_breda', 'Breda 2026 parking tax by-law')}. Compare other cities on ${h.a('vergunning', 'the permit page')} and under ${h.a('naheffing', 'parking penalty')}.</p>`,
   },

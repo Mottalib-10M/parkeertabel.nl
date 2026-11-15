@@ -30,12 +30,32 @@ export const zoneName = (n: string) => n.replace(/^[A-Z0-9]+(?:_[A-Z0-9]+)+\s+(?
   // 3e tour) ; elles sont redites en clair sous la liste (paidHoursText de tool-specs.ts).
   .replace(/,?\s*\b(?:ma|di|wo|do|vr|za|zo)(?:-(?:ma|di|wo|do|vr|za|zo))?\s+\d{1,2}(?:-\d{0,2})?(?:\s*u\b)?/gi, '')
   .replace(/\s{2,}/g, ' ').trim();
-/** « zone X », sans doubler le mot quand le nom commence déjà par « Zone » (« Zone Zone 10 », testeurs 2026-11-14). */
-export const inZone = (n: string) => { const x = zoneName(n); return /^zone\b/i.test(x) ? x : `zone ${x}`; };
 /** Wijk du CBS où se trouve la zone (scripts/build-wijken.py, Locatieserver de PDOK), ou celle de sa zone mère
  *  (« T12A_U21 » est dans T12A) ; undefined sans géométrie (Utrecht, Maastricht…). Testeurs 2026-11-14 (4e tour). */
 const W = WIJKEN as Record<string, Record<string, string>>;
-export const wijkOf = (c: City, z: Zone): string | undefined => W[c.s]?.[z.i] ?? W[c.s]?.[z.i.split('_')[0]];
+export const wijkOf = (c: City, z: Zone): string | undefined => {
+  const w = W[c.s]?.[z.i] ?? W[c.s]?.[z.i.split('_')[0]];
+  // « Wijk 11 Binnenstad » (numérotation CBS de Delft, Den Haag) : le numéro ne dit rien au lecteur (testeurs, 5e tour).
+  return w?.replace(/^Wijk \d+\s+/, '');
+};
+/** Le nom lisible d'une zone : le nom du registre sans ses codes (tarif abrégé « 10c max 60 po 60 », « Tariefzone 1 »,
+ *  « (T11V) », « Straatparkeren Gebied B », « Wijk C. », « ZONE_B1_1 », « Centrum1 betaald parkeren ») ; '' s'il ne
+ *  reste qu'un code. Testeurs 2026-11-14 (5e tour) : les codes bruts se lisaient comme une erreur informatique. */
+export const plainName = (n: string): string => {
+  const x = zoneName(n)
+    .replace(/\b[A-Z]+(?:_[A-Z0-9]+)+\b/g, ' ')
+    .replace(/\(\s*[A-Z0-9_ ]+\s*\)/g, ' ')
+    .replace(/\(?\btot\b[^)]*\)?/gi, ' ')
+    .replace(/\b(?:straatparkeren\s+)?gebied(?:scode)?\s+\S+/gi, ' ')
+    .replace(/\btarief(?:zone|code)?\s*\d+(?:\s+groep)?/gi, ' ')
+    .replace(/\bT\d+[A-Z]?\b/g, ' ')
+    .replace(/\bverbod\b.*$|\btbv\b.*$|\s*\([^)]*$/gi, ' ')
+    .replace(/^(?:[A-Z]?\d+)\s*-\s*|\bstraatparkeren\b|\bPO\b|\b(?:ma|di|wo|do|vr|za|zo)-(?:ma|di|wo|do|vr|za|zo)\b|\bmax\.?\s*\d+\s*(?:uur|u|min\w*)?\b|,\s*[A-Z]$/g, ' ')
+    .replace(/\b\d+c\b|\b(?:max\.?|po)\s+\d+\b|\bWS\b|\bbetaald parkeren\b|\buurtarief\s+[A-Z]\b|\bstraattarief\b|\bzone\s+\d+\b|\bwijk\s+[A-Z]\b\.?|:\d+|\bsport\b/gi, ' ')
+    .replace(/_\d+\b/g, '').replace(/([a-zà-ÿ])\d+\b/g, '$1')
+    .replace(/\s{2,}/g, ' ').replace(/^[\s,/+-]+|[\s,/+-]+$/g, '').trim();
+  return isCodeName(x) ? '' : x;
+};
 /** Un nom du registre qui n'est qu'un code (« 10c max 60 po 60 », « Zone 12 », « Wijk C. », « 9003 ») : aucun mot de
  *  quatre lettres ou plus en dehors des mots de service. */
 const SERVICE = /^(zone|tarief\w*|groep|betaald|parkeren|gebied\w*|wijk|max|telkens|minuten|uur|dagtarief|vanaf)$/i;
