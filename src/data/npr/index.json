@@ -1,5 +1,5 @@
 {
- "read": "2026-11-12",
+ "read": "2026-11-16",
  "cities": [
   {
    "slug": "amsterdam",
@@ -192,10 +192,10 @@
    "slug": "almere",
    "name": "Almere",
    "mgr": "34",
-   "zones": 12,
+   "zones": 11,
    "pr": 0,
    "garages": 0,
-   "geo": 12,
+   "geo": 11,
    "hMin": 0.7,
    "hMax": 4.2
   },
