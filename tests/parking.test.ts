@@ -1,3 +1,4 @@
+import { formatMoney } from '../src/lib/format';
 /** Moteur de stationnement : cas tirés du registre NPR (lu le 2026-11-12) et vérifiés à la main sur les CSV. */
 import { describe, it, expect } from 'vitest';
 import * as K from '../src/lib/engine/parking';
@@ -29,5 +30,9 @@ describe('calcul d\'un stationnement', () => {
 describe('outils', () => {
   for (const kind of ['kosten', 'gratis', 'dagkaart', 'vergunning', 'naheffing', 'pr']) for (const l of ['nl', 'en'] as const)
     it(`${kind} (${l}) rend un chiffre`, () => { const o = runTool(kind, l); expect(o.value).toMatch(/\d/); expect(JSON.stringify(o)).not.toMatch(/undefined|NaN/); });
+  // 2027 : chiffre pour les villes publiées, « nog niet gepubliceerd » pour les autres, jamais un montant inventé.
+  it('jaar2027 utrecht : 12 x 56,75 = 681,00', () => expect(runTool('jaar2027', 'nl', { stad: 'utrecht' }).value).toBe(`${formatMoney(681, 2, 'nl')} per jaar`));
+  it('jaar2027 rotterdam : pas encore publié', () => { const o = runTool('jaar2027', 'nl', { stad: 'rotterdam' }); expect(o.value).toBe('nog niet gepubliceerd'); expect(JSON.stringify(o)).not.toMatch(/undefined|NaN/); });
+  it('jaar2027 (en) groningen', () => expect(runTool('jaar2027', 'en', { stad: 'groningen' }).value).toBe(`${formatMoney(408.8, 2, 'en')} a year`));
   for (const s of CITY_PAGES) it(`kosten ${s} : la zone centrale est payante`, () => expect(runTool('kosten', 'nl', { stad: s }, { zone: defaultZone(K.city(s)).i }).value).not.toBe('€ 0,00'));
 });

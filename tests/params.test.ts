@@ -10,4 +10,13 @@ const XML = existsSync(new URL('../data-raw/cvdr/', import.meta.url));
 describe.skipIf(!XML)('montants lus dans les verordeningen', () => {
   for (const [slug, s] of Object.entries(P.steden)) it(slug, () => { const t = texte(s.file); for (const q of s.q) expect(t, `${slug}: « ${q} »`).toContain(q); });
   it('maximum wettelijk', () => expect(texte(P.naheffingMax.file)).toContain(P.naheffingMax.q));
+  // 2027 : verordeningen déjà publiées au CVDR le 2026-11-22 (data-raw/cvdr/2027).
+  for (const [slug, s] of Object.entries(P.jaar2027.steden)) it(`${slug} 2027`, () => { const t = texte(s.file); for (const q of s.q) expect(t, `${slug} 2027: « ${q} »`).toContain(q); });
+});
+describe('maximum 2027 (Staatscourant 2026, 26024)', () => {
+  it('84,30 au 1er janvier 2027, au-dessus de 2026', () => {
+    expect(P.jaar2027.naheffingMax.bedrag).toBe(84.3);
+    expect(P.jaar2027.naheffingMax.van).toBe(P.naheffingMax.bedrag);
+    for (const s of Object.values(P.jaar2027.steden)) expect(s.nah).toBeLessThanOrEqual(P.jaar2027.naheffingMax.bedrag);
+  });
 });

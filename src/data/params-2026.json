@@ -217,6 +217,54 @@
    }
   }
  },
+ "jaar2027": {
+  "read": "2026-11-22",
+  "naheffingMax": {
+   "bedrag": 84.3,
+   "van": 82.0,
+   "ingang": "2027-01-01",
+   "src": "stcrt_2026_26024"
+  },
+  "steden": {
+   "utrecht": {
+    "file": "2027/Utrecht",
+    "src": "vo27_utrecht",
+    "nah": 78.41,
+    "q": [
+     "bedragen, ter zake van de belasting bedoeld in artikel 2, eerste lid, onderdeel a: € 78,41",
+     "Per maand: € 56,75 b. Per kwartaal: € 170,25",
+     "Zone A1: € 8,30"
+    ],
+    "verg": {
+     "bedrag": 56.75,
+     "per": "maand",
+     "nl": "Eerste bewonersvergunning zone A1: € 56,75 per maand (€ 170,25 per kwartaal)",
+     "en": "First resident permit, zone A1: €56.75 a month (€170.25 a quarter)"
+    },
+    "uur": {
+     "zone": "A1",
+     "oud": 8.01,
+     "nieuw": 8.3
+    }
+   },
+   "groningen": {
+    "file": "2027/Groningen",
+    "src": "vo27_groningen",
+    "nah": 84.3,
+    "q": [
+     "bedragen € 84,30",
+     "(Bewonersvergunning eerste zone): € 408,80",
+     "(Bewonersvergunning tweede zone): € 138,70"
+    ],
+    "verg": {
+     "bedrag": 408.8,
+     "per": "jaar",
+     "nl": "Bewonersvergunning eerste zone (Binnenstad): € 408,80 per jaar; tweede zone € 138,70",
+     "en": "Resident permit, first zone (city centre): €408.80 a year; second zone €138.70"
+    }
+   }
+  }
+ },
  "sources": {
   "npr_gebied": {
    "url": "https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-GEBIED/adw6-9hsg",
@@ -356,6 +404,27 @@
    "label": {
     "nl": "Gemeente Almere: Verordening op de heffing en de invordering van parkeerbelastingen 2026",
     "en": "Municipality of Almere: Verordening op de heffing en de invordering van parkeerbelastingen 2026 (parking tax by-law)"
+   }
+  },
+  "stcrt_2026_26024": {
+   "url": "https://zoek.officielebekendmakingen.nl/stcrt-2026-26024.html",
+   "label": {
+    "nl": "Staatscourant 2026, 26024: Regeling van de minister van BZK van 29 juni 2026, maximum kosten naheffingsaanslag 2027",
+    "en": "Staatscourant 2026, 26024: order of the Interior Minister of 29 June 2026, maximum penalty costs for 2027"
+   }
+  },
+  "vo27_utrecht": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR769624/1",
+   "label": {
+    "nl": "Gemeente Utrecht: Verordening parkeerbelastingen gemeente Utrecht 2027",
+    "en": "Municipality of Utrecht: Verordening parkeerbelastingen gemeente Utrecht 2027 (parking tax by-law)"
+   }
+  },
+  "vo27_groningen": {
+   "url": "https://lokaleregelgeving.overheid.nl/CVDR769944/1",
+   "label": {
+    "nl": "Gemeente Groningen: Verordening op de heffing en invordering van parkeerbelastingen Groningen 2027",
+    "en": "Municipality of Groningen: Verordening op de heffing en invordering van parkeerbelastingen Groningen 2027 (parking tax by-law)"
    }
   }
  }

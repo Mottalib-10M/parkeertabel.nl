@@ -45,9 +45,29 @@ STEDEN = {
  'amersfoort': {'file': 'Amersfoort', 'nah': 78.80, 'uur': False, 'q': ['onder a bedragen € 78,80', 'Eerste bewonersvergunning vergunningzones A t/m D en X t/m Z € 30,-', 'Tweede bewonersvergunning vergunningzones B, X, Y1 en Y2 € 300,- per jaar'],
    'verg': {'bedrag': 30.00, 'per': 'eenmalig', 'nl': 'Eerste bewonersvergunning (zones A t/m D en X t/m Z): € 30,-; de tweede € 150,- of € 300,- per jaar', 'en': 'First resident permit (zones A to D and X to Z): €30; the second €150 or €300 a year'}},
 }
+# 2027 (campagne du 2026-11-22) : maximum national fixé par la Staatscourant, et les verordeningen 2027 déjà publiées au CVDR
+# (data-raw/cvdr/2027/<ville>.xml, téléchargés le 2026-11-22). Les autres villes n'avaient pas publié la leur ce jour-là.
+src['stcrt_2026_26024'] = {'url': 'https://zoek.officielebekendmakingen.nl/stcrt-2026-26024.html', 'label': {
+    'nl': 'Staatscourant 2026, 26024: Regeling van de minister van BZK van 29 juni 2026, maximum kosten naheffingsaanslag 2027',
+    'en': 'Staatscourant 2026, 26024: order of the Interior Minister of 29 June 2026, maximum penalty costs for 2027'}}
+V2027 = {'Utrecht': ('CVDR769624_1', 'Verordening parkeerbelastingen gemeente Utrecht 2027'),
+         'Groningen': ('CVDR769944_1', 'Verordening op de heffing en invordering van parkeerbelastingen Groningen 2027')}
+for name, (cid, t) in V2027.items():
+    a_, v_ = cid.split('_')
+    src[f'vo27_{name.lower()}'] = {'url': f'https://lokaleregelgeving.overheid.nl/{a_}/{v_}', 'label': {'nl': f'Gemeente {name}: {t}', 'en': f'Municipality of {name}: {t} (parking tax by-law)'}}
+JAAR2027 = {
+ 'read': '2026-11-22',
+ 'naheffingMax': {'bedrag': 84.30, 'van': 82.00, 'ingang': '2027-01-01', 'src': 'stcrt_2026_26024'},
+ 'steden': {
+  'utrecht': {'file': '2027/Utrecht', 'src': 'vo27_utrecht', 'nah': 78.41, 'q': ['bedragen, ter zake van de belasting bedoeld in artikel 2, eerste lid, onderdeel a: € 78,41', 'Per maand: € 56,75 b. Per kwartaal: € 170,25', 'Zone A1: € 8,30'],
+    'verg': {'bedrag': 56.75, 'per': 'maand', 'nl': 'Eerste bewonersvergunning zone A1: € 56,75 per maand (€ 170,25 per kwartaal)', 'en': 'First resident permit, zone A1: €56.75 a month (€170.25 a quarter)'},
+    'uur': {'zone': 'A1', 'oud': 8.01, 'nieuw': 8.30}},
+  'groningen': {'file': '2027/Groningen', 'src': 'vo27_groningen', 'nah': 84.30, 'q': ['bedragen € 84,30', '(Bewonersvergunning eerste zone): € 408,80', '(Bewonersvergunning tweede zone): € 138,70'],
+    'verg': {'bedrag': 408.80, 'per': 'jaar', 'nl': 'Bewonersvergunning eerste zone (Binnenstad): € 408,80 per jaar; tweede zone € 138,70', 'en': 'Resident permit, first zone (city centre): €408.80 a year; second zone €138.70'}},
+ }}
 P = {'_lisezmoi': 'Paramètres du site, écrits par scripts/build-params.py. Tarifs de rue : src/data/npr/*.json (scripts/build-npr.py, Nationaal Parkeer Register). Vergunningen et naheffing : lus dans la verordening parkeerbelastingen de chaque gemeente (CVDR, data-raw/cvdr/*.xml) le 2026-11-13 ; tests/params.test.ts retrouve chaque montant mot pour mot dans le XML.',
      'year': 2026, 'retrieved_at': '2026-11-13', 'npr_read': '2026-11-12', 'valid_from': '2026-01-01', 'valid_to': '2026-12-31',
      'naheffingMax': {'bedrag': 82.00, 'q': 'Wettelijk mag er maximaal € 82,00 per naheffing in rekening gebracht worden', 'file': 'Almere', 'src': 'vo_almere'},
-     'steden': STEDEN, 'sources': src}
+     'steden': STEDEN, 'jaar2027': JAAR2027, 'sources': src}
 json.dump(P, open(os.path.join(ROOT, 'src/data/params-2026.json'), 'w'), ensure_ascii=False, indent=1)
 print('params-2026.json :', len(STEDEN), 'villes,', len(src), 'sources')

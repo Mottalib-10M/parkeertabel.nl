@@ -5,7 +5,7 @@
  */
 import type { ToolSpec, V, ToolOut, Input, Opt } from './tool-types';
 import { resolve } from './tool-types';
-import { formatMoney, formatNumber, displayDate, hhmm, duree, type Lang } from './format';
+import { formatMoney, formatNumber, formatPercent, displayDate, hhmm, duree, type Lang } from './format';
 import * as K from './engine/parking';
 import P from '../data/params-2026.json';
 import { COVER } from './couverture';
@@ -342,6 +342,48 @@ function vergunningSpec(l: Lang, a?: Args): ToolSpec {
   };
 }
 
+/* ------------------------------------------------------------------ jaar2027 */
+type S27 = { nah: number; verg: { bedrag: number; per: string; nl: string; en: string }; uur?: { zone: string; oud: number; nieuw: number } };
+export const J27 = P.jaar2027 as unknown as { read: string; naheffingMax: { bedrag: number; van: number; ingang: string }; steden: Record<string, S27> };
+const jaarbedrag = (x: { bedrag: number; per: string }) => (x.per === 'maand' ? x.bedrag * 12 : x.per === 'kwartaal' ? x.bedrag * 4 : x.bedrag);
+/** 2026 → 2027 : vergunning et naheffing d'une ville ; « nog niet gepubliceerd » tant que sa verordening 2027 n'est pas au CVDR. */
+function jaar2027Spec(l: Lang, a?: Args): ToolSpec {
+  const opts = cityOpts().filter((o) => STEDEN[o.value]);
+  return {
+    inputs: [{ kind: 'select', id: 'stad', label: T(l, 'Stad', 'City'), def: String(a?.stad ?? 'utrecht'), options: opts }],
+    run: (v) => {
+      const slug = STEDEN[s(v, 'stad')] ? s(v, 'stad') : 'utrecht', c = K.city(slug), oud = STEDEN[slug], nieuw = J27.steden[slug];
+      const y26 = jaarbedrag(oud.verg), once = oud.verg.per === 'eenmalig';
+      const max27 = J27.naheffingMax.bedrag, rd = displayDate(J27.read, l);
+      if (!nieuw) return {
+        label: T(l, `Bewonersvergunning ${c.n} in 2027`, `Resident permit in ${c.n} in 2027`), value: T(l, 'nog niet gepubliceerd', 'not published yet'),
+        hyp: T(l, `Stand van ${rd}: de verordening parkeerbelastingen 2027 van ${c.n} stond nog niet in het register van lokale regelgeving`, `As of ${rd}: ${c.n}'s 2027 parking tax by-law was not yet in the official register of local regulations`),
+        rows: [
+          [T(l, 'Eerste vergunning in 2026', 'First permit in 2026'), once ? `${eur(oud.verg.bedrag, l)} ${T(l, 'eenmalig', 'one-off')}` : `${eur(y26, l)} ${T(l, 'per jaar', 'a year')}`],
+          [T(l, 'Kosten naheffingsaanslag in 2026', 'Penalty assessment costs in 2026'), eur(oud.nah, l)],
+          [T(l, 'Wettelijk maximum voor de kosten in 2027', 'Legal maximum for the costs in 2027'), eur(max27, l)],
+        ],
+        note: T(l, 'De gemeenteraad stelt de tarieven voor 2027 meestal in november of december vast. Tot dan tonen wij geen bedrag voor 2027.', 'The council usually sets the 2027 rates in November or December. Until then we show no 2027 amount.'),
+      };
+      const y27 = jaarbedrag(nieuw.verg), diff = y27 - y26;
+      const rows: Array<[string, string]> = [
+        [T(l, 'Eerste vergunning in 2026', 'First permit in 2026'), `${eur(y26, l)} ${T(l, 'per jaar', 'a year')}`],
+        [T(l, 'Eerste vergunning in 2027', 'First permit in 2027'), `${eur(y27, l)} ${T(l, 'per jaar', 'a year')}`],
+        [T(l, 'Verschil per jaar', 'Difference per year'), `${diff >= 0 ? '+' : '−'}${eur(Math.abs(diff), l)} (${formatPercent(diff / y26, 1, l)})`],
+        [T(l, 'Kosten naheffingsaanslag', 'Penalty assessment costs'), `${eur(oud.nah, l)} → ${eur(nieuw.nah, l)}`],
+      ];
+      if (nieuw.uur) rows.push([T(l, `Uurtarief op straat, zone ${nieuw.uur.zone}`, `Street rate per hour, zone ${nieuw.uur.zone}`), `${eur(nieuw.uur.oud, l)} → ${eur(nieuw.uur.nieuw, l)}`]);
+      return {
+        label: T(l, `Bewonersvergunning ${c.n} in 2027`, `Resident permit in ${c.n} in 2027`), value: `${eur(y27, l)} ${T(l, 'per jaar', 'a year')}`,
+        hyp: T(l, 'Eerste vergunning op het adres, zoals in de verordening parkeerbelastingen 2027', 'First permit at the address, as set in the 2027 parking tax by-law'),
+        sub: nieuw.verg[l],
+        rows,
+        note: T(l, `Gelezen in de verordening 2027 op ${rd}. Het wettelijke maximum voor de kosten van een naheffingsaanslag is ${eur(max27, l)} vanaf 1 januari 2027.`, `Read in the 2027 by-law on ${rd}. The legal maximum for penalty assessment costs is ${eur(max27, l)} from 1 January 2027.`),
+      };
+    },
+  };
+}
+
 /* ------------------------------------------------------------------ naheffing */
 /** Ce que la verordening ajoute aux kosten, en mots simples (« niet betaalde belasting » ne se comprenait pas). */
 export const nahPlusText = (uur: boolean, l: Lang) => (uur ? T(l, '1 uur parkeergeld van die zone', '1 hour of parking in that zone') : T(l, 'het parkeergeld dat u niet betaalde', 'the parking fee you did not pay'));
@@ -411,7 +453,7 @@ function prSpec(l: Lang, a?: Args): ToolSpec {
 }
 
 export const SPECS: Record<string, (l: Lang, arg?: Args) => ToolSpec> = {
-  kosten: kostenSpec, gratis: gratisSpec, dagkaart: dagkaartSpec, vergunning: vergunningSpec, naheffing: naheffingSpec, pr: prSpec,
+  kosten: kostenSpec, gratis: gratisSpec, dagkaart: dagkaartSpec, vergunning: vergunningSpec, naheffing: naheffingSpec, pr: prSpec, jaar2027: jaar2027Spec,
 };
 export const TOOL_KINDS = Object.keys(SPECS);
 export function getTool(kind: string, l: Lang, arg?: Args): ToolSpec {
